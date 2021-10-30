@@ -1,0 +1,48 @@
+/* SHOP HOMEPAGE */
+
+
+/* CATEGORY LIST */
+
+.row>* {
+  padding: 0 !important;
+}
+
+/* Style category cards hyperlink */
+.category-list--container a {
+  color: black;
+  margin-bottom: 15px;
+  text-decoration: none;
+}
+.category-list--container a:hover {
+  color: black;
+  cursor: pointer;
+}
+/* Style category cards */
+.category--background {
+  background-size: cover; 
+  display: flex;
+  flex-direction: column;
+  height: 110px;
+  justify-content: center;
+  position: relative;
+}
+.category--background h5 {
+  margin-left: 20px;
+  margin-top: 10px;
+  position: relative;
+  text-decoration: underline;
+}
+.category--background p {
+  margin-left: 20px;
+  position: relative;
+}
+.category--after-overlay::after {
+  background-image: linear-gradient(45deg, #eaee44, pink);
+  content: "";
+  height: 100%;
+  left: 0;
+  opacity: .80;
+  position: absolute;
+  top: 0;
+  width: 100%;
+}
