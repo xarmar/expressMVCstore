@@ -1,0 +1,7 @@
+extends layout
+
+block content
+  div.container
+    div.col-12.category--background(style=`background-image: url(${category.imgUrl};`)
+      div.category--after-overlay
+      h5 #[strong #{category.title}]
