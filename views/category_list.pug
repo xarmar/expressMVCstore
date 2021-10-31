@@ -4,13 +4,13 @@ block content
   div.container
     div.row.category-list--container
       each category in category_list
-          a.col-md-12.col-lg-6(href=category.url)
+          a.col-md-12.col-lg-5(href=category.url)
             div.col-12.category--background(style=`background-image: url(${category.imgUrl}`)
-              div.category--after-overlay
+              div.gradient--overlay.gradient--overlay-yellowpink
               h5 #[strong #{category.title}]
               
               if category.description
                 p #{category.description}
       else
-        p There are no categories available. 
-
+        p There are no categories available.
+      

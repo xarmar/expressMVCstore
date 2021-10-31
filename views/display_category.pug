@@ -2,6 +2,27 @@ extends layout
 
 block content
   div.container
-    div.col-12.category--background(style=`background-image: url(${category.imgUrl};`)
-      div.category--after-overlay
+    div.col-12.category--background(style=`background-image: url(${category.imgUrl}`)
+      div.gradient--overlay.gradient--overlay-yellowpink
+      a.category--navigation(href="/shop") Back to Shop
       h5 #[strong #{category.title}]
+      p #{category.description}
+  if items
+      div.container
+        div.row.d-flex.mt-2.mx-0.justify-content-between
+          each item in items
+              div.col-lg-5.item--container(style=`background-image: url(${item.imgUrl}` alt=item.title)
+                div.col-12.gradient--overlay.gradient--overlay-orangeyellow
+                  div.item--content
+                    div
+                      p #[strong #{item.title}]
+                      if item.description 
+                        p #{item.description}
+                      p  #[strong Price:] #{item.price}€ | #[strong Stock:] #{item.stock}
+                      if item.discount > 0
+                        p Discount #{item.discount}%
+                    div.item--options
+                      a(href="www.google.pt") 
+                        button.btn--edit.btn.btn-sm.btn-secondary Edit
+                      a(href="www.google.pt") 
+                        button.btn--delete.btn.btn-sm.btn-danger Delete
