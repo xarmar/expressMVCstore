@@ -112,7 +112,7 @@ function createCategories(cb) {
       function (callback) {
         CategoryCreate(
           "Vegetables",
-          "Bought directly from local farmers, our products help support small farms around our state.",
+          "Get all the vitamins and minerals you need with our top quality BIO veggies.",
           "/images/vegetables_category.jpg",
           callback
         );
@@ -166,7 +166,7 @@ function createItems(cb) {
           "From Portugal",
           "0.39",
           "318",
-          "fruits",
+          Categories[0],
           false,
           0,
           "/images/banana_fruits.jpg",
@@ -179,7 +179,7 @@ function createItems(cb) {
           "From Spain",
           "0.34",
           "519",
-          "fruits",
+          Categories[0],
           false,
           0,
           "/images/apple_fruits.jpg",
@@ -192,7 +192,7 @@ function createItems(cb) {
           "From Mexico",
           "0.86",
           "219",
-          "fruits",
+          Categories[0],
           false,
           0,
           "/images/mango_fruits.jpg",
@@ -207,7 +207,7 @@ function createItems(cb) {
           "500g",
           "4.49",
           "120",
-          "meat",
+          Categories[1],
           false,
           0,
           "/images/pork_meat.jpg",
@@ -220,23 +220,23 @@ function createItems(cb) {
           "400g",
           "5.10",
           "97",
-          "meat",
+          Categories[1],
           false,
           0,
-          "/images/beef_meet.jpg",
+          "/images/beef_meat.jpg",
           callback
         );
       },
       function (callback) {
         itemCreate(
           "Chicken Wings",
-          "600gs",
+          "600g",
           "3.99",
           "118",
-          "meat",
+          Categories[1],
           false,
           0,
-          "/images/chickenWings_meat.jpg",
+          "/images/chickenwings_meat.jpg",
           callback
         );
       },
@@ -248,7 +248,7 @@ function createItems(cb) {
           "750g",
           "7.79",
           "14",
-          "fish",
+          Categories[2],
           false,
           0,
           "/images/salmon_fish.jpg",
@@ -261,7 +261,7 @@ function createItems(cb) {
           "450g",
           "4.15",
           "42",
-          "fish",
+          Categories[2],
           false,
           0,
           "/images/tuna_fish.jpg",
@@ -272,10 +272,10 @@ function createItems(cb) {
       function (callback) {
         itemCreate(
           "Tomato",
-          "",
+          "Packed with vitamins",
           "0.19",
           "440",
-          "Vegetables",
+          Categories[3],
           false,
           0,
           "/images/tomato_vegetables.jpg",
@@ -284,24 +284,24 @@ function createItems(cb) {
       },
       function (callback) {
         itemCreate(
-          "Broccolli",
-          "",
+          "Broccoli",
+          "Good source of calcium",
           "0.34",
           "299",
-          "Vegetables",
+          Categories[3],
           false,
           0,
-          "/images/broccolli_vegetables.jpg",
+          "/images/broccoli_vegetables.jpg",
           callback
         );
       },
       function (callback) {
         itemCreate(
           "Carrot",
-          "",
+          "Shopping for your pet rabbit",
           "0.12",
           "299",
-          "Vegetables",
+          Categories[3],
           false,
           0,
           "/images/carrot_vegetables.jpg",
@@ -312,26 +312,56 @@ function createItems(cb) {
       function (callback) {
         itemCreate(
           "Chocolate Cake",
-          "",
+          "Life is better after chocolate cake",
           "2.19",
           "44",
-          "Bakery",
+          Categories[4],
           false,
           0,
-          "/images/chocolateCake_bakery.jpg",
+          "/images/chocolatecake_bakery.jpg",
           callback
         );
       },
       function (callback) {
         itemCreate(
           "Bread",
-          "",
+          "Hot and crunchy. Yummi!",
           "0.89",
           "140",
-          "Bakery",
+          Categories[4],
           false,
           0,
           "/images/bread_bakery.jpg",
+          callback
+        );
+      },
+
+      // Create Drinks Items
+      function (callback) {
+        itemCreate(
+          "Water",
+          "Classic botted water",
+          "3.19",
+          "120",
+          Categories[5],
+          false,
+          0,
+          "/images/water_drinks.jpg",
+          callback
+        );
+      },
+
+      // Create Dairy Items
+      function (callback) {
+        itemCreate(
+          "Milk",
+          "Lactose and gluten free",
+          "1.34",
+          "120",
+          Categories[6],
+          false,
+          0,
+          "/images/milk_dairy.jpg",
           callback
         );
       },
@@ -340,13 +370,13 @@ function createItems(cb) {
       function (callback) {
         itemCreate(
           "Lipstick",
-          "",
+          "Get ready to go out today",
           "6.90",
           "30",
-          "Health and Beauty",
+          Categories[7],
           false,
           0,
-          "/images/lipstick_healthAndBeauty.jpg",
+          "/images/lipstick_healthandbeauty.jpg",
           callback
         );
       },
@@ -356,10 +386,10 @@ function createItems(cb) {
           "Smell good, feel good...",
           "2.90",
           "45",
-          "Health and Beauty",
+          Categories[7],
           false,
           0,
-          "/images/bodyWash_healthAndBeauty.jpg",
+          "/images/bodywash_healthandbeauty.jpg",
           callback
         );
       },
