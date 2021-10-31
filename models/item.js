@@ -4,11 +4,11 @@ var Schema = mongoose.Schema;
 
 var ItemSchema = new Schema(
   {
-    title: {type: String, required: true, maxLength: 100},
-    description: {type: String, required: false, maxLength: 800},
-    price: {type: Number, required: true},
-    stock: {type: Number, required: true},
-    category: {type: String, required: true, maxLength: 45},
+    title: {type: String, required: true, maxLength: 40},
+    description: {type: String, required: false, maxLength: 120},
+    price: {type: Number, required: true, max: 9999},
+    stock: {type: Number, required: true, max: 999},
+    category: [{ type: Schema.Types.ObjectId, ref: "Category" }],
     promotion: {type: Boolean, required: true},
     discount: {type: Number, required: false, max: 100},
     imgUrl: {type: String, required: true}
