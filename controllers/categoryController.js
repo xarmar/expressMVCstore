@@ -1,5 +1,6 @@
 var Category = require("../models/category");
-// var async = require("async");
+var Item = require("../models/item");
+var async = require("async");
 // const { body,validationResult } = require('express-validator');
 
 
@@ -19,32 +20,26 @@ exports.category_list = function (req, res, next) {
     });
 };
 
-// Display only one category.
-exports.display_category = function (req, res, next) {
-  Category.find( {  } )
-    .sort([["title", "ascending"]])
-    .exec(function (err, list_categories) {
-      if (err) {
-        return next(err);
-      }
-      //Successful, so render
-      res.render("category_list", {
-        title: "All Categories",
-        category_list: list_categories,
-      });
-    });
-};
-
-
+// Display a category and all it's items
 exports.display_category = function (req, res, next) {
   var split = req.url.split('/');
   var id = split[split.length - 1];
-  Category.findById(id, function (err, found_category) {
-    if (err) {
-      return next(err);
+  async.parallel({
+    found_category: function(callback) {
+      Category.findById(id)
+      .exec(callback);
+    },
+    items: function(callback) {
+      Item.find({category: id}).exec(callback);
+    },
+  },
+  function(err, results) {
+    if(err) {
+      return next(err)
     }
     res.render("display_category", {
-      category: found_category
+      category: results.found_category,
+      items: results.items,
     });
-});
-}
+  });
+};
