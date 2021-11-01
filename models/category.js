@@ -10,11 +10,19 @@ var CategorySchema = new Schema(
   }
 );
 
+// Virtual for machine title
+CategorySchema.virtual('machine_title')
+.get(function() {
+  return this.title.toLowerCase().split(" ").join("")
+});
+
 // Virtual for category's URL
 CategorySchema.virtual('url')
 .get(function() {
-  return '/shop/category/' + this.title.toLowerCase().split(" ").join("") + '/' + this._id;
+  return '/shop/category/' + this.machine_title + '/' + this._id;
 });
+
+
 
 //Export model
 module.exports = mongoose.model('Category', CategorySchema);
