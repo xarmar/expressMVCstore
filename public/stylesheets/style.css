@@ -66,7 +66,8 @@
   margin-top: 10px;
   margin-bottom: 10px;
   flex-direction: row;
-  height: 160px;
+  height: fit-content;
+  min-height: 160px;
   width: auto;
   background-size: cover;
 }
@@ -101,4 +102,9 @@
 .category--navigation-container a:hover {
   color:black;
   text-decoration: underline;
+}
+
+/* Style forms */
+form label {
+  margin-top: 10px;
 }
