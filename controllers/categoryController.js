@@ -1,11 +1,10 @@
 var Category = require("../models/category");
 var Item = require("../models/item");
 var async = require("async");
-// const { body,validationResult } = require('express-validator');
 
 
 // Display list of all Categories.
-exports.category_list = function (req, res, next) {
+exports.category_list_get = function (req, res, next) {
   Category.find()
     .sort([["title", "ascending"]])
     .exec(function (err, list_categories) {
@@ -21,7 +20,7 @@ exports.category_list = function (req, res, next) {
 };
 
 // Display a category and all it's items
-exports.display_category = function (req, res, next) {
+exports.category_get = function (req, res, next) {
   var split = req.url.split('/');
   var id = split[split.length - 1];
   async.parallel({
