@@ -9,8 +9,6 @@ var ItemSchema = new Schema(
     price: {type: Number, required: true, max: 9999},
     stock: {type: Number, required: true, max: 999},
     category: [{ type: Schema.Types.ObjectId, ref: "Category" }],
-    promotion: {type: Boolean, required: true},
-    discount: {type: Number, required: false, max: 100},
     imgUrl: {type: String, required: true}
   }
 );
@@ -20,6 +18,13 @@ ItemSchema
 .virtual('url')
 .get(function() {
   return '/item/' + this._id;
+});
+
+// Virtual for machine title
+ItemSchema
+.virtual('machine_title')
+.get(function() {
+  return this.title.toLowerCase().split(" ").join("")
 });
 
 //Export model

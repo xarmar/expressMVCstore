@@ -52,8 +52,6 @@ function itemCreate(
   price,
   stock,
   category,
-  promotion,
-  discount,
   imgUrl,
   cb
 ) {
@@ -63,8 +61,6 @@ function itemCreate(
     price: price,
     stock: stock,
     category: category,
-    promotion: promotion,
-    discount: discount,
     imgUrl: imgUrl
   };
   var item = new Item(itemDetails);
@@ -167,8 +163,6 @@ function createItems(cb) {
           "0.39",
           "318",
           Categories[0],
-          false,
-          0,
           "/images/banana_fruits.jpg",
           callback
         );
@@ -180,8 +174,6 @@ function createItems(cb) {
           "0.34",
           "519",
           Categories[0],
-          false,
-          0,
           "/images/apple_fruits.jpg",
           callback
         );
@@ -193,8 +185,6 @@ function createItems(cb) {
           "0.86",
           "219",
           Categories[0],
-          false,
-          0,
           "/images/mango_fruits.jpg",
           callback
         );
@@ -208,8 +198,6 @@ function createItems(cb) {
           "4.49",
           "120",
           Categories[1],
-          false,
-          0,
           "/images/pork_meat.jpg",
           callback
         );
@@ -221,8 +209,6 @@ function createItems(cb) {
           "5.10",
           "97",
           Categories[1],
-          false,
-          0,
           "/images/beef_meat.jpg",
           callback
         );
@@ -234,8 +220,6 @@ function createItems(cb) {
           "3.99",
           "118",
           Categories[1],
-          false,
-          0,
           "/images/chickenwings_meat.jpg",
           callback
         );
@@ -249,8 +233,6 @@ function createItems(cb) {
           "7.79",
           "14",
           Categories[2],
-          false,
-          0,
           "/images/salmon_fish.jpg",
           callback
         );
@@ -262,8 +244,6 @@ function createItems(cb) {
           "4.15",
           "42",
           Categories[2],
-          false,
-          0,
           "/images/tuna_fish.jpg",
           callback
         );
@@ -276,8 +256,6 @@ function createItems(cb) {
           "0.19",
           "440",
           Categories[3],
-          false,
-          0,
           "/images/tomato_vegetables.jpg",
           callback
         );
@@ -289,8 +267,6 @@ function createItems(cb) {
           "0.34",
           "299",
           Categories[3],
-          false,
-          0,
           "/images/broccoli_vegetables.jpg",
           callback
         );
@@ -302,8 +278,6 @@ function createItems(cb) {
           "0.12",
           "299",
           Categories[3],
-          false,
-          0,
           "/images/carrot_vegetables.jpg",
           callback
         );
@@ -316,8 +290,6 @@ function createItems(cb) {
           "2.19",
           "44",
           Categories[4],
-          false,
-          0,
           "/images/chocolatecake_bakery.jpg",
           callback
         );
@@ -329,8 +301,6 @@ function createItems(cb) {
           "0.89",
           "140",
           Categories[4],
-          false,
-          0,
           "/images/bread_bakery.jpg",
           callback
         );
@@ -344,8 +314,6 @@ function createItems(cb) {
           "3.19",
           "120",
           Categories[5],
-          false,
-          0,
           "/images/water_drinks.jpg",
           callback
         );
@@ -359,8 +327,6 @@ function createItems(cb) {
           "1.34",
           "120",
           Categories[6],
-          false,
-          0,
           "/images/milk_dairy.jpg",
           callback
         );
@@ -374,8 +340,6 @@ function createItems(cb) {
           "6.90",
           "30",
           Categories[7],
-          false,
-          0,
           "/images/lipstick_healthandbeauty.jpg",
           callback
         );
@@ -387,8 +351,6 @@ function createItems(cb) {
           "2.90",
           "45",
           Categories[7],
-          false,
-          0,
           "/images/bodywash_healthandbeauty.jpg",
           callback
         );
