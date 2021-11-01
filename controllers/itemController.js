@@ -121,8 +121,24 @@ exports.item_delete_post = function (req, res, next) {
       if (err) {
         return next(err);
       } else {
-        res.redirect("/shop/category/" + categoryObj._id);
+        res.redirect(categoryObj.url);
       }
     }
   );
+};
+
+// Create a new item
+exports.item_create_get = function (req, res, next) {
+  var category_id = req.params.id;
+  // Get category object
+  Category.findById(category_id, function getCategory(err, category_obj) {
+    if (err) {
+        return next(err);
+    } else {
+      res.render("create_item", {
+        title: "Create new item",
+        category: category_obj,
+      });
+    }
+  });
 };
