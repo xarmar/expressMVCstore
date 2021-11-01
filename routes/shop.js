@@ -11,14 +11,16 @@ var item_controller = require("../controllers/itemController");
 // GET - Redirect user from "/" to "/shop"
 router.get("/", category_controller.category_list_get);
 
-// GET - Redirect user to category page
-router.get("/category/*", category_controller.category_get);
+// GET - Create Item request
+router.get("/category/*/:id/new", item_controller.item_create_get);
+
+// GET - Read Category request
+router.get("/category/*/:id", category_controller.category_get);
+
+// POST - Delete Item request
+router.post("/item/:id/delete", item_controller.item_delete_post);
 
 // GET - Redirect user to edit item page
 // router.get("/item/:id/edit", item_controller.item_edit_get);
-
-// POST - Delete item
-router.post("/item/:id/delete", item_controller.item_delete_post);
-
 
 module.exports = router;
