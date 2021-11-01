@@ -52,11 +52,9 @@
   top: 0;
   width: 100%;
 }
-
 .gradient--overlay-yellowpink::after {
   background-image: linear-gradient(45deg, #eaee44, pink);
 }
-
 .gradient--overlay-orangeyellow::after {
   background-image: linear-gradient(-45deg, orange, #eaee44);
 }
@@ -68,7 +66,7 @@
   margin-top: 10px;
   margin-bottom: 10px;
   flex-direction: row;
-  height: 145px;
+  height: 160px;
   width: auto;
   background-size: cover;
 }
@@ -85,18 +83,18 @@
   flex-direction: column;
   align-items: flex-end;
 }
-.item--options a {
+.item--options a, form {
   margin-top: 20px;
 }
 
-/* Style anchor tag in category detail page */
-.category--navigation {
+/* Style 'Back to Shop' anchor tag in category detail page */
+.category--navigation{
   color: black;
   display: flex;
   justify-content: flex-end;
   margin-right: 20px;
   text-decoration: none;
-  z-index: 20;
+  z-index: 10;
 }
 .category--navigation:hover {
   color:black;
