@@ -3,6 +3,7 @@ var Item = require("../models/item");
 var async = require("async");
 var path = require("path");
 var fs = require("fs");
+var formidable = require('formidable');
 
 // Edit a item
 exports.item_edit_post = function (req, res, next) {
@@ -127,7 +128,7 @@ exports.item_delete_post = function (req, res, next) {
   );
 };
 
-// Create a new item
+// Render view for creating new item
 exports.item_create_get = function (req, res, next) {
   var category_id = req.params.id;
 
@@ -156,4 +157,91 @@ exports.item_create_get = function (req, res, next) {
       }
     });
   }
+
+// Create a new item
+exports.item_create_post = function (req, res, next) {
+  var title;
+  var description;
+  var price;
+  var stock;
+  var categoryId;
+  var image;
+
+  var formData = new formidable.IncomingForm();
+  formData.parse(req, function(err, fields, files) {
+    if (err) {
+      return next(err);
+    }
+    else {
+      // Get form fields
+      title = fields.title;
+      description = fields.description;
+      price = fields.price;
+      stock = fields.stock;
+      categoryId = fields.categoryId;
+      image = files.image;
+
+      async.waterfall(
+        [
+          // 1 - Find category
+          function (callback) {
+            Category.findById(categoryId, function getCategory(err, categoryObj) {
+              if (err) {
+                return next(err);
+              } else {
+                callback(null, categoryObj);
+              }
+            });
+          },
+          // 2 - Create item object
+          function (categoryObj, callback) {
+            
+            var imgUrl = `/images/${title.toLowerCase().split(" ").join("")}_${categoryObj.machine_title}.jpg`
+
+            // Prepare Item object
+            var newItem = new Item({
+                title: title,
+                description: description,
+                price: price,
+                stock: stock,
+                category: categoryId,
+                imgUrl: imgUrl
+              }
+            )
+            // Save Item Object in Database
+            newItem.save(function (err, itemObj) {
+              if (err) {
+                return next(err);            
+              }
+              else {
+                callback(null, categoryObj, itemObj)
+              }
+            });
+          },
+          // 3 - Save image in Server
+          function (categoryObj, itemObj, callback) {
+            var targetPath = `public/images/${itemObj.machine_title}_${categoryObj.machine_title}.jpg`;
+            
+            // Move image from 'temp' path to permanent public/images path
+            fs.rename(image.filepath, targetPath, function (err) {
+              if (err) {
+                err
+              }
+              else {
+                callback(null, categoryObj)
+              }
+            });
+          },
+        ],
+        function (err, categoryObj) {
+          if (err) {
+            return next(err);
+          } else {
+            res.redirect(categoryObj.url);
+          }
+        }
+      )
+    }
+  });
+}
 
