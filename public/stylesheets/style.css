@@ -88,15 +88,17 @@
 }
 
 /* Style 'Back to Shop' anchor tag in category detail page */
-.category--navigation{
-  color: black;
-  display: flex;
+.category--navigation-container {
   justify-content: flex-end;
-  margin-right: 20px;
-  text-decoration: none;
   z-index: 10;
 }
-.category--navigation:hover {
+.category--navigation-container a {
+  color: black;
+  display: flex;
+  margin-right: 20px;
+  text-decoration: none;
+}
+.category--navigation-container a:hover {
   color:black;
   text-decoration: underline;
 }
