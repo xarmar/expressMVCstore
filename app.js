@@ -7,9 +7,6 @@ mongoose.connect(mongoDB, { useNewUrlParser: true , useUnifiedTopology: true});
 var db = mongoose.connection;
 db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 
-
-
-
 var createError = require('http-errors');
 var express = require('express');
 var path = require('path');
