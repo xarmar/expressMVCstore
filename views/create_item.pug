@@ -30,8 +30,12 @@ block content
                   div.col-4.mx-3
                     label(for='title') Stock:
                     input#stock.form-control(type='number' name='Stock' required='true' value="" placeholder = "312")
-                  input#category.form-control(type='hidden' name='categoryId' required='true' value=category._id)
                   div.form-group.row.justify-content-center
+                    div.col-4.mx-3
+                      label(for='categoryId') Category:
+                      select#categoryId.form-control(name='categoryId' required='true')
+                        each cat in category_list
+                          option(value=cat._id) #{cat.title}
                     div.col-4.mx-3
                       label(for='image') Item image:
                       input#imageUrlt.form-control(type= 'file' name='image' required='true' value="")
