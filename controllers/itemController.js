@@ -130,15 +130,30 @@ exports.item_delete_post = function (req, res, next) {
 // Create a new item
 exports.item_create_get = function (req, res, next) {
   var category_id = req.params.id;
-  // Get category object
-  Category.findById(category_id, function getCategory(err, category_obj) {
-    if (err) {
+
+  async.parallel(
+    {
+      // Get category object
+      category: function (callback) {
+        Category.findById(category_id).exec(callback);
+      },
+      // Get category list
+      category_list: function (callback) {
+        Category.find().sort([["title", "ascending"]]).exec(callback);
+      },
+    },
+    function (err, results) {
+      if (err) {
         return next(err);
-    } else {
-      res.render("create_item", {
-        title: "Create new item",
-        category: category_obj,
-      });
-    }
-  });
-};
+      }
+      else {
+        // Successful, so render.
+        res.render("create_item", {
+          title: "Create new item",
+          category: results.category,
+          category_list: results.category_list
+        });
+      }
+    });
+  }
+
