@@ -4,14 +4,17 @@ block content
   div.container
     div.col-12.category--background(style=`background-image: url(${category.imgUrl}`)
       div.gradient--overlay.gradient--overlay-yellowpink
-      a.category--navigation(href="/shop") Back to Shop
       h5 #[strong #{category.title}]
       p #{category.description}
+      div.category--navigation-container.d-flex
+        if items.length > 0
+          a(href=`/shop/category/${category.title.toLowerCase().split(" ").join("")}/${category._id}/new`) Add new Item
+        a(href="/shop") Back to Shop
   if items.length > 0
       div.container
         div.row.d-flex.mt-2.mx-0.justify-content-between
           each item in items
-              div.col-lg-5.item--container(style=`background-image: url(${item.imgUrl}` alt=item.title)
+              div.col-lg-6.item--container(style=`background-image: url(${item.imgUrl}` alt=item.title)
                 div.col-12.gradient--overlay.gradient--overlay-orangeyellow
                   div.item--content
                     div
@@ -36,4 +39,5 @@ block content
             div.item--content.d-flex.justify-content-center
               div.justify-content-center
                 h5.mb-3 #[strong No items to show]
-                button.btn.btn-light.text.d-flex.mx-auto Add items
+                a.text-decoration-none(href=`/shop/category/${category.title.toLowerCase().split(" ").join("")}/${category._id}/new`)
+                  button.btn.btn-light.text.d-flex.mx-auto Add new item
