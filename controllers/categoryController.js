@@ -21,8 +21,7 @@ exports.category_list_get = function (req, res, next) {
 
 // Display a category and all it's items
 exports.category_get = function (req, res, next) {
-  var split = req.url.split('/');
-  var id = split[split.length - 1];
+  var id = req.params.id;
   async.parallel({
     found_category: function(callback) {
       Category.findById(id)
