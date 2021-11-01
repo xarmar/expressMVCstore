@@ -8,7 +8,7 @@ block content
       p #{category.description}
       div.category--navigation-container.d-flex
         if items.length > 0
-          a(href=`/shop/category/${category.title.toLowerCase().split(" ").join("")}/${category._id}/new`) Add new Item
+          a(href=`/shop/category/${category.machine_title}/${category._id}/new`) Add new Item
         a(href="/shop") Back to Shop
   if items.length > 0
       div.container
@@ -22,8 +22,6 @@ block content
                       if item.description 
                         p #{item.description}
                       p  #[strong Price:] #{item.price}€ | #[strong Stock:] #{item.stock}
-                      if item.discount > 0
-                        p Discount #{item.discount}%
                     div.item--options
                       a(href='/shop' + item.url + '/edit') 
                         button.btn--edit.btn.btn-sm.btn-secondary Edit
@@ -39,5 +37,5 @@ block content
             div.item--content.d-flex.justify-content-center
               div.justify-content-center
                 h5.mb-3 #[strong No items to show]
-                a.text-decoration-none(href=`/shop/category/${category.title.toLowerCase().split(" ").join("")}/${category._id}/new`)
+                a.text-decoration-none(href=`/shop/category/${category.machine_title}/${category._id}/new`)
                   button.btn.btn-light.text.d-flex.mx-auto Add new item
