@@ -14,6 +14,9 @@ router.get("/", category_controller.category_list_get);
 // GET - Create Item request
 router.get("/category/*/:id/new", item_controller.item_create_get);
 
+// POST - Create Item request
+router.post("/category/*/:id/new", item_controller.item_create_post)
+
 // GET - Read Category request
 router.get("/category/*/:id", category_controller.category_get);
 
