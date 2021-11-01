@@ -18,8 +18,8 @@ var ItemSchema = new Schema(
 // Virtual for item's URL
 ItemSchema
 .virtual('url')
-.get(() => {
-  return '/' + this.category + '/' + this._id;
+.get(function() {
+  return '/item/' + this._id;
 });
 
 //Export model
