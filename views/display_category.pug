@@ -7,7 +7,7 @@ block content
       a.category--navigation(href="/shop") Back to Shop
       h5 #[strong #{category.title}]
       p #{category.description}
-  if items
+  if items.length > 0
       div.container
         div.row.d-flex.mt-2.mx-0.justify-content-between
           each item in items
@@ -22,7 +22,18 @@ block content
                       if item.discount > 0
                         p Discount #{item.discount}%
                     div.item--options
-                      a(href="www.google.pt") 
+                      a(href='/shop' + item.url + '/edit') 
                         button.btn--edit.btn.btn-sm.btn-secondary Edit
-                      a(href="www.google.pt") 
+                      form(method='POST' action=`/shop${item.url}/delete`)
+                        div.form-group
+                          input#id.form-control(type='hidden',name='id', required='true', value=item._id)
                         button.btn--delete.btn.btn-sm.btn-danger Delete
+  else
+    div.container
+      div.row.d-flex.mt-2.mx-0.justify-content-between
+        div.col-lg-12.item--container
+          div.col-12.gradient--overlay.gradient--overlay-orangeyellow.align-middle.align-self-center
+            div.item--content.d-flex.justify-content-center
+              div.justify-content-center
+                h5.mb-3 #[strong No items to show]
+                button.btn.btn-light.text.d-flex.mx-auto Add items
