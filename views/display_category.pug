@@ -21,14 +21,12 @@ block content
                       p #[strong #{item.title}]
                       if item.description 
                         p #{item.description}
-                      p  #[strong Price:] #{item.price}€ | #[strong Stock:] #{item.stock}
+                      p  #[strong Price:] #{item.price.toFixed(2)}€ | #[strong Stock:] #{item.stock}
                     div.item--options 
-                      a(href=`${item._id}/edit`) 
+                      a(href=`${category._id}/${item._id}/edit`) 
                         button.btn--edit.btn.btn-sm.btn-secondary Edit
-                      form(method='POST' action=`${item._id}/delete`)
-                        div.form-group
-                          input#id.form-control(type='hidden',name='id', required='true', value=item._id)
-                        button.btn--delete.btn.btn-sm.btn-danger Delete
+                      a(href=`${category._id}/${item._id}/delete`) 
+                        button.btn--edit.btn.btn-sm.btn-danger Delete
   else
     div.container
       div.row.d-flex.mt-2.mx-0.justify-content-between
