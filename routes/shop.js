@@ -21,7 +21,7 @@ router.post("/category/*/:id/new", item_controller.item_create_post)
 router.get("/category/*/:id", category_controller.category_get);
 
 // POST - Delete Item request
-router.post("/item/:id/delete", item_controller.item_delete_post);
+router.post("/category/*/:id/delete", item_controller.item_delete_post);
 
 // GET - Redirect user to edit item page
 // router.get("/item/:id/edit", item_controller.item_edit_get);
