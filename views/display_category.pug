@@ -8,7 +8,7 @@ block content
       p #{category.description}
       div.category--navigation-container.d-flex
         if items.length > 0
-          a(href=`/shop/category/${category.machine_title}/${category._id}/new`) Add new Item
+          a(href=`${category._id}/new`) Add new Item
         a(href="/shop") Back to Shop
   if items.length > 0
       div.container
@@ -22,10 +22,10 @@ block content
                       if item.description 
                         p #{item.description}
                       p  #[strong Price:] #{item.price}€ | #[strong Stock:] #{item.stock}
-                    div.item--options
-                      a(href='/shop' + item.url + '/edit') 
+                    div.item--options 
+                      a(href=`${item._id}/edit`) 
                         button.btn--edit.btn.btn-sm.btn-secondary Edit
-                      form(method='POST' action=`/shop${item.url}/delete`)
+                      form(method='POST' action=`${item._id}/delete`)
                         div.form-group
                           input#id.form-control(type='hidden',name='id', required='true', value=item._id)
                         button.btn--delete.btn.btn-sm.btn-danger Delete
@@ -37,5 +37,5 @@ block content
             div.item--content.d-flex.justify-content-center
               div.justify-content-center
                 h5.mb-3 #[strong No items to show]
-                a.text-decoration-none(href=`/shop/category/${category.machine_title}/${category._id}/new`)
+                a.text-decoration-none(href=`${category._id}/new`)
                   button.btn.btn-light.text.d-flex.mx-auto Add new item
