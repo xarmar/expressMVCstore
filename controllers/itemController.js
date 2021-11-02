@@ -63,102 +63,26 @@ exports.item_edit_post = function (req, res, next) {
   // );
 };
 
-// Delete a item
-exports.item_delete_post = function (req, res, next) {
-  var item_id = req.body.id
 
-  async.waterfall(
-    [
-      // Get item object
-      function (callback) {
-        Item.findById(item_id, function getItem(err, itemObj) {
-          if (err) {
-            return next(err);
-          } else {
-            callback(null, itemObj);
-          }
-        });
-      },
-      // Get category object
-      function (itemObj, callback) {
-        var categoryId = itemObj.category;
-
-        Category.findById(categoryId, function getCategory(err, categoryObj) {
-          if (err) {
-            return next(err);
-          } else {
-            callback(null, itemObj, categoryObj);
-          }
-        });
-      },
-      // Delete image
-      function (itemObj, categoryObj, callback) {
-        var itemTitle = itemObj.title.toLowerCase().split(" ").join("");
-        var categoryTitle = categoryObj.title.toLowerCase().split(" ").join("");
-        var imgPath = path.join(
-          "public/images/" + itemTitle + "_" + categoryTitle + ".jpg"
-        );
-
-        fs.unlink(imgPath, function (err) {
-          if (err) {
-            return next(err);
-          } else {
-            callback(null, itemObj, categoryObj);
-          }
-        });
-      },
-      // Delete item object
-      function (itemObj, categoryObj, callback) {
-        Item.findByIdAndRemove(itemObj._id, function deleteItem(err) {
-          if (err) {
-            return next(err);
-          } else {
-            callback(null, categoryObj);
-          }
-        });
-      },
-    ],
-    function (err, categoryObj) {
-      if (err) {
-        return next(err);
-      } else {
-        res.redirect(categoryObj.url);
-      }
-    }
-  );
-};
 
 // Render view for creating new item
 exports.item_create_get = function (req, res, next) {
-  var category_id = req.params.id;
+  var category_id = req.params.category;
 
-  async.parallel(
-    {
-      // Get category object
-      category: function (callback) {
-        Category.findById(category_id).exec(callback);
-      },
-      // Get category list
-      category_list: function (callback) {
-        Category.find().sort([["title", "ascending"]]).exec(callback);
-      },
-    },
-    function (err, results) {
-      if (err) {
-        return next(err);
-      }
-      else {
-        // Successful, so render.
-        res.render("create_item", {
-          title: "Create new item",
-          category: results.category,
-          category_list: results.category_list
-        });
-      }
-    });
-  }
-
-// Create a new item
+  Category.findById(category_id).exec(function(err, category) {
+    if(err) {
+      return next(err)
+    }
+    else {
+      // Successful, so render.
+      res.render("create_item", {
+        title: "Create new item",
+        category: category,
+      });
+    }
+  });
+}
+// Creates a new item
 exports.item_create_post = function (req, res, next) {
   var title;
   var description;
@@ -245,3 +169,136 @@ exports.item_create_post = function (req, res, next) {
   });
 }
 
+// Render view for editing an item
+exports.item_edit_get = function (req, res, next) {
+  var category_id = req.params.category;
+  var item_id = req.params.item;
+
+  async.parallel(
+    {
+      // Get category object
+      category: function (callback) {
+        Category.findById(category_id).exec(callback);
+      },
+      // Get category object
+      item: function (callback) {
+        Item.findById(item_id).exec(callback);
+      },
+      // Get category list
+      category_list: function (callback) {
+        Category.find().sort([["title", "ascending"]]).exec(callback);
+      },
+    },
+    function (err, results) {
+      if (err) {
+        return next(err);
+      }
+      else {
+        // Successful, so render.
+        res.render("edit_item", {
+          title: "Edit your item",
+          category: results.category,
+          category_list: results.category_list,
+          item: results.item
+        });
+      }
+    }
+  );
+}
+
+// TODO- item_edit_post
+
+// Render view for deleting an item
+exports.item_delete_get = function (req, res, next) {
+  var category_id = req.params.category;
+  var item_id = req.params.item;
+
+  async.parallel(
+    {
+      // Get category object
+      category: function (callback) {
+        Category.findById(category_id).exec(callback);
+      },
+      // Get category object
+      item: function (callback) {
+        Item.findById(item_id).exec(callback);
+      },
+    },
+    function (err, results) {
+      if (err) {
+        return next(err);
+      }
+      else {
+        // Successful, so render.
+        res.render("delete_item", {
+          title: "Delete your item",
+          category: results.category,
+          item: results.item
+        });
+      }
+    }
+  );
+}
+// Delete an item
+exports.item_delete_post = function (req, res, next) {
+  var item_id = req.params.item;
+  var category_id = req.params.category;
+
+  async.waterfall(
+    [
+      // Get item object
+      function (callback) {
+        Item.findById(item_id, function getItem(err, itemObj) {
+          if (err) {
+            return next(err);
+          } else {
+            callback(null, itemObj);
+          }
+        });
+      },
+      // Get category object
+      function (itemObj, callback) {
+        Category.findById(category_id, function getCategory(err, categoryObj) {
+          if (err) {
+            return next(err);
+          } else {
+            callback(null, itemObj, categoryObj);
+          }
+        });
+      },
+      // Delete image
+      function (itemObj, categoryObj, callback) {
+        var itemTitle = itemObj.title.toLowerCase().split(" ").join("");
+        var categoryTitle = categoryObj.title.toLowerCase().split(" ").join("");
+        var imgPath = path.join(
+          "public/images/" + itemTitle + "_" + categoryTitle + ".jpg"
+        );
+
+        fs.unlink(imgPath, function (err) {
+          if (err) {
+            return next(err);
+          } else {
+            callback(null, itemObj, categoryObj);
+          }
+        });
+      },
+      // Delete item object
+      function (itemObj, categoryObj, callback) {
+        Item.findByIdAndRemove(itemObj._id, function deleteItem(err) {
+          if (err) {
+            return next(err);
+          } else {
+            callback(null, categoryObj);
+          }
+        });
+      },
+    ],
+    function (err, categoryObj) {
+      if (err) {
+        return next(err);
+      } else {
+        res.redirect(categoryObj.url);
+      }
+    }
+  );
+};
