@@ -35,7 +35,7 @@ block content
                       label(for='categoryId') Category:
                       select#categoryId.form-control(name='categoryId' required='true')
                         each cat in category_list
-                          if cat._id = category._id
+                          if cat._id.toString() === category._id.toString()
                             option(value=cat._id selected) #{cat.title}
                           else 
                             option(value=cat._id) #{cat.title}
