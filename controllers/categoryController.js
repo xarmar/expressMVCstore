@@ -36,6 +36,7 @@ exports.category_get = function (req, res, next) {
       return next(err)
     }
     res.render("display_category", {
+      title: `${results.found_category.title} items`,
       category: results.found_category,
       items: results.items,
     });
