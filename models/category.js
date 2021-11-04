@@ -19,7 +19,7 @@ CategorySchema.virtual('machine_title')
 // Virtual for category's URL
 CategorySchema.virtual('url')
 .get(function() {
-  return '/shop/category/' + this.machine_title + '/' + this._id;
+  return `/shop/category/${this.machine_title}/${this._id}`
 });
 
 
