@@ -14,6 +14,9 @@ router.get("/", category_controller.category_list_get);
 // GET - Update Item request
 router.get("/category/*/:category/:item/edit", item_controller.item_edit_get)
 
+// GET - Update Item request
+router.post("/category/*/:category/:item/edit", item_controller.item_edit_post)
+
 // Get - Delete Item request
 router.get("/category/*/:category/:item/delete", item_controller.item_delete_get)
 // POST - Delete Item request
