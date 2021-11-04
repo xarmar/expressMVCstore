@@ -198,8 +198,6 @@ exports.item_edit_post = function (req, res, next) {
             let category_machine_name = results.new_chosen_category.machine_title;
             let imgUrl =  `/images/${item_machine_name}_${category_machine_name}.jpg`;
 
-            let pre_update_imgUrl = results.original_item.imgUrl
-            
             // Prepare new item that will replace original_item
             let updated_item = {
               title: title,
@@ -210,51 +208,74 @@ exports.item_edit_post = function (req, res, next) {
               imgUrl: imgUrl,
             };
 
-            // Update item with new info
+            // Update original item with new info
             Item.findByIdAndUpdate(item_id, updated_item, function(err) {
               if(err) {
                 return next(err);
               }
               else {
-                console.log(image);
                 // If a new image was NOT uploaded, just rename the old image
+                let originalImagePath = `public/images/${results.original_item.machine_title}_${results.original_category.machine_title}.jpg`;
                 if(image.size === 0) {
-                  fs.rename(`public${pre_update_imgUrl}`, `public${updated_item.imgUrl}`, function (err) {
-                    if (err) {
-                      return next(err);
+                  // If item has a image, rename it
+                  if(fs.existsSync(originalImagePath)) {
+                    fs.rename(originalImagePath, `public${updated_item.imgUrl}`, function (err) {
+                      if (err) {
+                        return next(err);
+                      }
+                    });  
+                  }
+                  // Redirect user to original category
+                  Item.find({category: category_id}, function(err, item_list) {
+                    if(err) {
+                      return next(err)
                     }
-                  });  
+                    else {
+                        res.render("display_category", {
+                          title: `${results.original_category.title} items`,
+                          category: results.original_category,
+                          items: item_list       
+                        });
+                    }
+                  });
                 }
                 // Else, delete old image and upload new one to public/image
                 else {
                   // Delete old image
-                  fs.unlink(`public${pre_update_imgUrl}`, function (err) {
+                  if(fs.existsSync(originalImagePath)) {
+                    fs.unlink(originalImagePath, function (err) {
+                      if (err) {
+                        return next(err);
+                      }
+                    });
+                  }
+
+                  // Prepare path of new image
+                  let updated_machine_title = updated_item.title.toLowerCase().split(" ").join("");
+                  let newPath = `public/images/${updated_machine_title}_${results.new_chosen_category.machine_title}.jpg`;
+                  
+                  // Move uploaded image from 'temp' path to permanent public/images path
+                  fs.rename(image.filepath, newPath, function (err) {
                     if (err) {
                       return next(err);
                     }
-                  });
-                  // Move uploaded image from 'temp' path to permanent public/images path
-                  var targetPath = `public${updated_item.imageUrl}`;
-                  fs.rename(image.filepath, targetPath, function (err) {
-                    if (err) {
-                      return next(err);
+                    else {
+                      // Redirect user to original category
+                      Item.find({category: category_id}, function(err, item_list) {
+                        if(err) {
+                          return next(err)
+                        }
+                        else {
+                          res.render("display_category", {
+                            title: `${results.original_category.title} items`,
+                            category: results.original_category,
+                            items: item_list       
+                          });
+                        }
+                      });
                     }
                   });
                 }
-
-                // Redirect user to original category
-                Item.find({category: category_id}, function(err, item_list) {
-                  if(err) {
-                    return next(err)
-                  }
-                  else {
-                    res.render("display_category", {
-                      title: `${original_category.title} items`,
-                      category: original_category,
-                      items: item_list       
-                    });
-                  }
-                });
               }
             });
           }
