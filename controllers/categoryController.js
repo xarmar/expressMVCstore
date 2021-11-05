@@ -35,7 +35,7 @@ exports.category_get = function (req, res, next) {
     if(err) {
       return next(err)
     }
-    res.render("display_category", {
+    res.render("category_read", {
       title: `${results.found_category.title} items`,
       category: results.found_category,
       items: results.items,

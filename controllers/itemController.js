@@ -14,7 +14,7 @@ exports.item_create_get = function (req, res, next) {
       return next(err);
     } else {
       // Successful, so render.
-      res.render("create_item", {
+      res.render("item_create", {
         title: "Create new item",
         category: category,
       });
@@ -109,7 +109,7 @@ exports.item_create_post = function (req, res, next) {
 };
 
 // Render view for editing an item
-exports.item_edit_get = function (req, res, next) {
+exports.item_update_get = function (req, res, next) {
   var category_id = req.params.category;
   var item_id = req.params.item;
 
@@ -135,7 +135,7 @@ exports.item_edit_get = function (req, res, next) {
         return next(err);
       } else {
         // Successful, so render.
-        res.render("edit_item", {
+        res.render("item_update", {
           title: "Edit your item",
           category: results.category,
           category_list: results.category_list,
@@ -146,7 +146,7 @@ exports.item_edit_get = function (req, res, next) {
   );
 };
 // Edit a item (WIP) - TODO TODO TODO
-exports.item_edit_post = function (req, res, next) {
+exports.item_update_post = function (req, res, next) {
   // Get original item and category id's
   var item_id = req.params.item;
   var category_id = req.params.category;
@@ -231,7 +231,7 @@ exports.item_edit_post = function (req, res, next) {
                       return next(err)
                     }
                     else {
-                        res.render("display_category", {
+                        res.render("category_read", {
                           title: `${results.original_category.title} items`,
                           category: results.original_category,
                           items: item_list       
@@ -266,7 +266,7 @@ exports.item_edit_post = function (req, res, next) {
                           return next(err)
                         }
                         else {
-                          res.render("display_category", {
+                          res.render("category_read", {
                             title: `${results.original_category.title} items`,
                             category: results.original_category,
                             items: item_list       
@@ -305,7 +305,7 @@ exports.item_delete_get = function (req, res, next) {
         return next(err);
       } else {
         // Successful, so render.
-        res.render("delete_item", {
+        res.render("item_delete", {
           title: "Delete your item",
           category: results.category,
           item: results.item,
