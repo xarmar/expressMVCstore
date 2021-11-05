@@ -84,16 +84,23 @@ exports.item_create_post = function (req, res, next) {
           },
           // 3 - Save image in Server
           function (categoryObj, itemObj, callback) {
-            var targetPath = `public/images/${itemObj.machine_title}_${categoryObj.machine_title}.jpg`;
+            // If a image was uploaded, save it
+            if(image.size > 0) {
+              var targetPath = `public/images/${itemObj.machine_title}_${categoryObj.machine_title}.jpg`;   
+              // Move image from 'temp' path to permanent public/images path
+              fs.rename(image.filepath, targetPath, function (err) {
+                if (err) {
+                  return next(err);
+                } 
+                else {
+                  callback(null, categoryObj);
+                }
+              });
+            }
+            else {
+              callback(null, categoryObj);
+            }
 
-            // Move image from 'temp' path to permanent public/images path
-            fs.rename(image.filepath, targetPath, function (err) {
-              if (err) {
-                return next(err);
-              } else {
-                callback(null, categoryObj);
-              }
-            });
           },
         ],
         function (err, categoryObj) {
