@@ -384,21 +384,24 @@ exports.item_delete_post = function (req, res, next) {
           }
         });
       },
-      // Delete image
+      // If a image exists, delete image
       function (itemObj, categoryObj, callback) {
         var itemTitle = itemObj.title.toLowerCase().split(" ").join("");
         var categoryTitle = categoryObj.title.toLowerCase().split(" ").join("");
         var imgPath = path.join(
           "public/images/" + itemTitle + "_" + categoryTitle + ".jpg"
         );
-
-        fs.unlink(imgPath, function (err) {
-          if (err) {
-            return next(err);
-          } else {
-            callback(null, itemObj, categoryObj);
-          }
-        });
+        if (fs.existsSync(imgPath)) {
+          fs.unlink(imgPath, function (err) {
+            if (err) {
+              return next(err);
+            } else {
+              callback(null, itemObj, categoryObj);
+            }
+          });
+        } else {
+          callback(null, itemObj, categoryObj);
+        }
       },
       // Delete item object
       function (itemObj, categoryObj, callback) {
