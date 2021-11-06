@@ -1,9 +1,10 @@
-var Category = require("../models/category");
-var Item = require("../models/item");
-var async = require("async");
-var path = require("path");
-var fs = require("fs");
-var formidable = require("formidable");
+const Category = require("../models/category");
+const Item = require("../models/item");
+const async = require("async");
+const path = require("path");
+const fs = require("fs");
+const formidable = require("formidable");
+const { body, validationResult } = require("express-validator");
 
 // Render view for creating new item
 exports.item_create_get = function (req, res, next) {
@@ -52,6 +53,9 @@ exports.item_create_post = function (req, res, next) {
         image.size === 0 ||
         validExts.some((ext) => fileType.replace("image/", "") === ext)
       ) {
+        // Get image ext: i,e; '.jpg'
+        let imgExt = `.${fileType.replace("image/", "")}`;
+
         async.waterfall(
           [
             // 1 - Find category
@@ -72,7 +76,7 @@ exports.item_create_post = function (req, res, next) {
               let imgUrl = `/images/${title
                 .toLowerCase()
                 .split(" ")
-                .join("")}_${categoryObj.machine_title}.jpg`;
+                .join("")}_${categoryObj.machine_title}${imgExt}`;
 
               // Prepare Item object
               let newItem = new Item({
@@ -96,7 +100,9 @@ exports.item_create_post = function (req, res, next) {
             function (categoryObj, itemObj, callback) {
               // If a image was uploaded, save it
               if (image.size > 0) {
-                let targetPath = `public/images/${itemObj.machine_title}_${categoryObj.machine_title}.jpg`;
+                let targetPath = path.join(
+                  "public" + itemObj.imgUrl
+                );
                 // Move image from 'temp' path to permanent public/images path
                 fs.rename(image.filepath, targetPath, function (err) {
                   if (err) {
@@ -386,10 +392,8 @@ exports.item_delete_post = function (req, res, next) {
       },
       // If a image exists, delete image
       function (itemObj, categoryObj, callback) {
-        let itemTitle = itemObj.title.toLowerCase().split(" ").join("");
-        let categoryTitle = categoryObj.title.toLowerCase().split(" ").join("");
         let imgPath = path.join(
-          "public/images/" + itemTitle + "_" + categoryTitle + ".jpg"
+          "public" + itemObj.imgUrl
         );
         if (fs.existsSync(imgPath)) {
           fs.unlink(imgPath, function (err) {
