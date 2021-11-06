@@ -19,17 +19,17 @@ block content
                 div.form-group.row.justify-content-center
                   div.col-lg-4.mx-3
                     label(for='title') Title:
-                    input#title.form-control(name='title' required value="" placeholder="Your item title...")
+                    input#title.form-control(name='title' required value=populate ? populate.title : "" placeholder="Your item title...")
                   div.col-lg-4.mx-3
                     label(for='description') Description:
-                    input#description.form-control(name='description' required value="" placeholder="Your item description...")
+                    input#description.form-control(name='description' required value=populate ? populate.description : "" placeholder="Your item description...")
                 div.form-group.row.justify-content-center
                   div.col-lg-4.mx-3
                     label(for='price') Price:
-                    input#price.form-control(type='number' step="0.01" name='price' required value="" placeholder= "3.19")
+                    input#price.form-control(type='number' step="0.01" name='price' required value=populate ? populate.price : "" placeholder= "3.19")
                   div.col-lg-4.mx-3
                     label(for='stock') Stock:
-                    input#stock.form-control(type='number' name='stock' required value="" placeholder = "312")
+                    input#stock.form-control(type='number' name='stock' required value=populate ? populate.stock : "" placeholder = "312")
                   div.form-group.row.justify-content-center
                     div.col-lg-4.mx-3
                       label(for='categoryId') Category:
@@ -37,7 +37,10 @@ block content
                         option(value=category._id) #{category.title}
                     div.col-lg-4.mx-3
                       label(for='image') Item image:
-                      input#imageUrlt.form-control(type= 'file' name='image' value="")
+                      input#imageUrlt.form-control(type= 'file' name='image' value="" accept=".jpg, .jpeg, .png")
+                      if warnings
+                        p.text-info.mt-1.mx-3 #{warnings.img}
+
                   div.form-group.row.justify-content-center
                     div.col-12.d-flex.mt-4.justify-content-center
                       input.btn.btn-primary(type="submit" value="Create item")
