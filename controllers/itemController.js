@@ -7,7 +7,7 @@ var formidable = require("formidable");
 
 // Render view for creating new item
 exports.item_create_get = function (req, res, next) {
-  var category_id = req.params.category;
+  let category_id = req.params.category;
 
   Category.findById(category_id).exec(function (err, category) {
     if (err) {
@@ -23,14 +23,14 @@ exports.item_create_get = function (req, res, next) {
 };
 // Creates a new item
 exports.item_create_post = function (req, res, next) {
-  var title;
-  var description;
-  var price;
-  var stock;
-  var categoryId;
-  var image;
+  let title;
+  let description;
+  let price;
+  let stock;
+  let categoryId;
+  let image;
 
-  var formData = new formidable.IncomingForm();
+  let formData = new formidable.IncomingForm();
   formData.parse(req, function (err, fields, files) {
     if (err) {
       return next(err);
@@ -69,13 +69,13 @@ exports.item_create_post = function (req, res, next) {
             },
             // 2 - Create item object
             function (categoryObj, callback) {
-              var imgUrl = `/images/${title
+              let imgUrl = `/images/${title
                 .toLowerCase()
                 .split(" ")
                 .join("")}_${categoryObj.machine_title}.jpg`;
 
               // Prepare Item object
-              var newItem = new Item({
+              let newItem = new Item({
                 title: title,
                 description: description,
                 price: price,
@@ -96,7 +96,7 @@ exports.item_create_post = function (req, res, next) {
             function (categoryObj, itemObj, callback) {
               // If a image was uploaded, save it
               if (image.size > 0) {
-                var targetPath = `public/images/${itemObj.machine_title}_${categoryObj.machine_title}.jpg`;
+                let targetPath = `public/images/${itemObj.machine_title}_${categoryObj.machine_title}.jpg`;
                 // Move image from 'temp' path to permanent public/images path
                 fs.rename(image.filepath, targetPath, function (err) {
                   if (err) {
@@ -144,8 +144,8 @@ exports.item_create_post = function (req, res, next) {
 
 // Render view for editing an item
 exports.item_update_get = function (req, res, next) {
-  var category_id = req.params.category;
-  var item_id = req.params.item;
+  let category_id = req.params.category;
+  let item_id = req.params.item;
 
   async.parallel(
     {
@@ -182,17 +182,17 @@ exports.item_update_get = function (req, res, next) {
 // Edit a item (WIP) - TODO TODO TODO
 exports.item_update_post = function (req, res, next) {
   // Get original item and category id's
-  var item_id = req.params.item;
-  var category_id = req.params.category;
+  let item_id = req.params.item;
+  let category_id = req.params.category;
 
-  var title;
-  var description;
-  var price;
-  var stock;
-  var categoryId;
-  var image;
+  let title;
+  let description;
+  let price;
+  let stock;
+  let categoryId;
+  let image;
 
-  var formData = new formidable.IncomingForm();
+  let formData = new formidable.IncomingForm();
   formData.parse(req, function (err, fields, files) {
     if (err) {
       return next(err);
@@ -329,8 +329,8 @@ exports.item_update_post = function (req, res, next) {
 
 // Render view for deleting an item
 exports.item_delete_get = function (req, res, next) {
-  var category_id = req.params.category;
-  var item_id = req.params.item;
+  let category_id = req.params.category;
+  let item_id = req.params.item;
 
   async.parallel(
     {
@@ -359,8 +359,8 @@ exports.item_delete_get = function (req, res, next) {
 };
 // Delete an item
 exports.item_delete_post = function (req, res, next) {
-  var item_id = req.params.item;
-  var category_id = req.params.category;
+  let item_id = req.params.item;
+  let category_id = req.params.category;
 
   async.waterfall(
     [
@@ -386,9 +386,9 @@ exports.item_delete_post = function (req, res, next) {
       },
       // If a image exists, delete image
       function (itemObj, categoryObj, callback) {
-        var itemTitle = itemObj.title.toLowerCase().split(" ").join("");
-        var categoryTitle = categoryObj.title.toLowerCase().split(" ").join("");
-        var imgPath = path.join(
+        let itemTitle = itemObj.title.toLowerCase().split(" ").join("");
+        let categoryTitle = categoryObj.title.toLowerCase().split(" ").join("");
+        let imgPath = path.join(
           "public/images/" + itemTitle + "_" + categoryTitle + ".jpg"
         );
         if (fs.existsSync(imgPath)) {
