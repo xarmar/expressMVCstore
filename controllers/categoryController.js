@@ -1,6 +1,6 @@
-var Category = require("../models/category");
-var Item = require("../models/item");
-var async = require("async");
+const Category = require("../models/category");
+const Item = require("../models/item");
+const async = require("async");
 
 
 // Display list of all Categories.

@@ -1,8 +1,8 @@
 var mongoose = require('mongoose');
 
-var Schema = mongoose.Schema;
+const Schema = mongoose.Schema;
 
-var CategorySchema = new Schema(
+const CategorySchema = new Schema(
   {
     title: {type: String, required: true, maxLength: 40},
     description: {type: String, required: true, maxLength: 120},
