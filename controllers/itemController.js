@@ -1,10 +1,11 @@
+const async = require("async");
+const { body, validationResult } = require("express-validator");
 const Category = require("../models/category");
 const Item = require("../models/item");
-const async = require("async");
+const fileIsValidImg = require("../helperFunctions/fileIsValidImg");
 const path = require("path");
-const fs = require("fs");
 const formidable = require("formidable");
-const { body, validationResult } = require("express-validator");
+const fs = require("fs");
 
 // Render view for creating new item
 exports.item_create_get = function (req, res, next) {
@@ -46,13 +47,9 @@ exports.item_create_post = function (req, res, next) {
 
       // Declare valid extensions of image
       let fileType = files.image.mimetype;
-      let validExts = ["jpg", "jpeg", "png"];
 
       // If NO image was uploaded OR uploaded image has valid extension => accept and render new item in list
-      if (
-        image.size === 0 ||
-        validExts.some((ext) => fileType.replace("image/", "") === ext)
-      ) {
+      if (image.size === 0 || fileIsValidImg(fileType)) {
         // Get image ext: i,e; '.jpg'
         let imgExt = `.${fileType.replace("image/", "")}`;
 
@@ -100,9 +97,7 @@ exports.item_create_post = function (req, res, next) {
             function (categoryObj, itemObj, callback) {
               // If a image was uploaded, save it
               if (image.size > 0) {
-                let targetPath = path.join(
-                  "public" + itemObj.imgUrl
-                );
+                let targetPath = path.join("public" + itemObj.imgUrl);
                 // Move image from 'temp' path to permanent public/images path
                 fs.rename(image.filepath, targetPath, function (err) {
                   if (err) {
@@ -392,9 +387,7 @@ exports.item_delete_post = function (req, res, next) {
       },
       // If a image exists, delete image
       function (itemObj, categoryObj, callback) {
-        let imgPath = path.join(
-          "public" + itemObj.imgUrl
-        );
+        let imgPath = path.join("public" + itemObj.imgUrl);
         if (fs.existsSync(imgPath)) {
           fs.unlink(imgPath, function (err) {
             if (err) {
