@@ -25,7 +25,7 @@ router.post("/category/*/:category/:item/delete", item_controller.item_delete_po
 // GET - Create Item request
 router.get("/category/*/:category/new", item_controller.item_create_get);
 // POST - Create Item request
-router.post("/category/*/*/new", item_controller.item_create_post)
+router.post("/category/*/:category/new", item_controller.item_create_post)
 
 // GET - Read Category request
 router.get("/category/*/:id", category_controller.category_get);
