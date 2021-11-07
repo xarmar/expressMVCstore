@@ -333,24 +333,6 @@ exports.item_update_post = function (req, res, next) {
                         }
                       );
                     }
-                    // Else, just render without image
-                    else {
-                      // Redirect user to original category
-                      Item.find(
-                        { category: category_id },
-                        function (err, item_list) {
-                          if (err) {
-                            return next(err);
-                          } else {
-                            res.render("category_read", {
-                              title: `${results.original_category.title} items`,
-                              category: results.original_category,
-                              items: item_list,
-                            });
-                          }
-                        }
-                      );
-                    }
                   }
                 }
               });
