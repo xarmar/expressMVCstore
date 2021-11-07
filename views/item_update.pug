@@ -41,7 +41,9 @@ block content
                             option(value=cat._id) #{cat.title}
                     div.col-lg-4.mx-3
                       label(for='image') Item image:
-                      input#imageUrlt.form-control(type= 'file' name='image' value="")
+                      input#imageUrlt.form-control(type= 'file' name='image' value="" accept=".jpg, .png")
+                      if warnings
+                        p.text-info.mt-1.mx-3 #{warnings.img}
                   div.form-group.row.justify-content-center
                     div.col-12.d-flex.mt-4.justify-content-center
                       input.btn.btn-primary(type="submit")
