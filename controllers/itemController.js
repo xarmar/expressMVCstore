@@ -1,7 +1,6 @@
 const async = require("async");
 const { body, validationResult } = require("express-validator");
 const Category = require("../models/category");
-const extractImgExt = require("../helperFunctions/extractImgExt");
 const fileIsValidImg = require("../helperFunctions/fileIsValidImg");
 const formidable = require("formidable");
 const Item = require("../models/item");
@@ -270,8 +269,6 @@ exports.item_update_post = function (req, res, next) {
                 }
                 else{
                   
-                  console.log(updatedItem);
-                  console.log("category ID = ", categoryId);
                   // If an image was uploaded - delete old one, create new one
                   if (fileIsValidImg(image.mimetype)) {
                     // Delete old image
@@ -284,7 +281,7 @@ exports.item_update_post = function (req, res, next) {
                     }
 
                     // Move uploaded image from 'temp' path to permanent public/images path
-                    fs.rename(image.filepath, 'public' + updatedItem.imgUrl, function (err) {
+                    fs.rename(image.filepath, 'public' + newItem_imgUrl, function (err) {
                       if (err) {
                         return next(err);
                       } else {
