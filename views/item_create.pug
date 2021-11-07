@@ -37,10 +37,9 @@ block content
                         option(value=category._id) #{category.title}
                     div.col-lg-4.mx-3
                       label(for='image') Item image:
-                      input#imageUrlt.form-control(type= 'file' name='image' value="" accept=".jpg, .jpeg, .png")
+                      input#imageUrlt.form-control(type= 'file' name='image' required value="" accept=".jpg, .jpeg, .png")
                       if warnings
                         p.text-info.mt-1.mx-3 #{warnings.img}
-
                   div.form-group.row.justify-content-center
                     div.col-12.d-flex.mt-4.justify-content-center
                       input.btn.btn-primary(type="submit" value="Create item")
