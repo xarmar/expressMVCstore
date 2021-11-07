@@ -1,10 +1,12 @@
 const async = require("async");
 const { body, validationResult } = require("express-validator");
 const Category = require("../models/category");
-const Item = require("../models/item");
+const extractImgExt = require("../helperFunctions/extractImgExt");
 const fileIsValidImg = require("../helperFunctions/fileIsValidImg");
-const path = require("path");
 const formidable = require("formidable");
+const Item = require("../models/item");
+var mongoose = require('mongoose');
+const path = require("path");
 const fs = require("fs");
 
 // Render view for creating new item
@@ -48,10 +50,8 @@ exports.item_create_post = function (req, res, next) {
       // Declare valid extensions of image
       let fileType = files.image.mimetype;
 
-      // If NO image was uploaded OR uploaded image has valid extension => accept and render new item in list
-      if (image.size === 0 || fileIsValidImg(fileType)) {
-        // Get image ext: i,e; '.jpg'
-        let imgExt = `.${fileType.replace("image/", "")}`;
+      // If image has valid extension => accept and render new item in list
+      if (fileIsValidImg(fileType)) {
 
         async.waterfall(
           [
@@ -73,7 +73,7 @@ exports.item_create_post = function (req, res, next) {
               let imgUrl = `/images/${title
                 .toLowerCase()
                 .split(" ")
-                .join("")}_${categoryObj.machine_title}${imgExt}`;
+                .join("")}_${categoryObj.machine_title}.jpg`;
 
               // Prepare Item object
               let newItem = new Item({
@@ -95,20 +95,15 @@ exports.item_create_post = function (req, res, next) {
             },
             // 3 - Save image in Server
             function (categoryObj, itemObj, callback) {
-              // If a image was uploaded, save it
-              if (image.size > 0) {
-                let targetPath = path.join("public" + itemObj.imgUrl);
-                // Move image from 'temp' path to permanent public/images path
-                fs.rename(image.filepath, targetPath, function (err) {
-                  if (err) {
-                    return next(err);
-                  } else {
-                    callback(null, categoryObj);
-                  }
-                });
-              } else {
-                callback(null, categoryObj);
-              }
+              let targetPath = path.join("public" + itemObj.imgUrl);
+              // Move image from 'temp' path to permanent public/images path
+              fs.rename(image.filepath, targetPath, function (err) {
+                if (err) {
+                  return next(err);
+                } else {
+                  callback(null, categoryObj);
+                }
+              });
             },
           ],
           function (err, categoryObj) {
@@ -180,7 +175,7 @@ exports.item_update_get = function (req, res, next) {
     }
   );
 };
-// Edit a item (WIP) - TODO TODO TODO
+// Edit a item
 exports.item_update_post = function (req, res, next) {
   // Get original item and category id's
   let item_id = req.params.item;
@@ -203,10 +198,8 @@ exports.item_update_post = function (req, res, next) {
       description = fields.description;
       price = fields.price;
       stock = fields.stock;
-      categoryId = fields.categoryId;
-      if (files.image) {
-        image = files.image;
-      }
+      categoryId = fields.categoryId,
+      image = files.image;
 
       async.parallel(
         {
@@ -218,7 +211,13 @@ exports.item_update_post = function (req, res, next) {
           original_category: function (callback) {
             Category.findById(category_id).exec(callback);
           },
-          // 3 - Get new chosen category item object
+          // 3 - Get category list of original category
+          category_list: function (callback) {
+            Category.find()
+              .sort([["title", "ascending"]])
+              .exec(callback);
+          },
+          // 4 - Get new chosen category item object
           new_chosen_category: function (callback) {
             Category.findById(categoryId).exec(callback);
           },
@@ -227,80 +226,118 @@ exports.item_update_post = function (req, res, next) {
           if (err) {
             return next(err);
           } else {
-            let item_machine_name = title.toLowerCase().split(" ").join("");
-            let category_machine_name =
-              results.new_chosen_category.machine_title;
-            let imgUrl = `/images/${item_machine_name}_${category_machine_name}.jpg`;
+            // If user uploads a valid image OR no image 
+            if (
+              fileIsValidImg(image.mimetype) ||
+              image.mimetype === "application/octet-stream"
+            ) {
+              let originalImagePath =
+                "public/images/" +
+                results.original_item.machine_title +
+                "_" +
+                results.original_category.machine_title +
+                '.jpg';
 
-            // Prepare new item that will replace original_item
-            let updated_item = {
-              title: title,
-              description: description,
-              price: price,
-              stock: stock,
-              categoryId: categoryId,
-              imgUrl: imgUrl,
-            };
+              // Prepare new item Imgurl
+              let newItem_machineTitle = title
+                .toLowerCase()
+                .split(" ")
+                .join("");
+              let newCategory_machineTitle =
+                results.new_chosen_category.machine_title;
 
-            // Update original item with new info
-            Item.findByIdAndUpdate(item_id, updated_item, function (err) {
-              if (err) {
-                return next(err);
-              } else {
-                // If a new image was NOT uploaded, just rename the old image
-                let originalImagePath = `public/images/${results.original_item.machine_title}_${results.original_category.machine_title}.jpg`;
-                if (image.size === 0) {
-                  // If item has a image, rename it
-                  if (fs.existsSync(originalImagePath)) {
-                    fs.rename(
-                      originalImagePath,
-                      `public${updated_item.imgUrl}`,
-                      function (err) {
+              let newItem_imgUrl =
+              "/images/" +
+              newItem_machineTitle +
+              "_" +
+              newCategory_machineTitle + 
+              ".jpg"
+
+              // Prepare new item that will replace original_item
+              let updated_item = {
+                title: title,
+                description: description,
+                price: price,
+                stock: stock,
+                category: mongoose.Types.ObjectId(categoryId),
+                imgUrl: newItem_imgUrl
+              };
+
+              // Update item in database
+              Item.findByIdAndUpdate(item_id, updated_item, function(err, updatedItem) {
+                if(err) {
+                  return next(err);
+                }
+                else{
+                  
+                  console.log(updatedItem);
+                  console.log("category ID = ", categoryId);
+                  // If an image was uploaded - delete old one, create new one
+                  if (fileIsValidImg(image.mimetype)) {
+                    // Delete old image
+                    if (fs.existsSync(originalImagePath)) {
+                      fs.unlink(originalImagePath, function (err) {
                         if (err) {
                           return next(err);
                         }
-                      }
-                    );
-                  }
-                  // Redirect user to original category
-                  Item.find(
-                    { category: category_id },
-                    function (err, item_list) {
+                      });
+                    }
+
+                    // Move uploaded image from 'temp' path to permanent public/images path
+                    fs.rename(image.filepath, 'public' + updatedItem.imgUrl, function (err) {
                       if (err) {
                         return next(err);
                       } else {
-                        res.render("category_read", {
-                          title: `${results.original_category.title} items`,
-                          category: results.original_category,
-                          items: item_list,
-                        });
-                      }
-                    }
-                  );
-                }
-                // Else, delete old image and upload new one to public/image
-                else {
-                  // Delete old image
-                  if (fs.existsSync(originalImagePath)) {
-                    fs.unlink(originalImagePath, function (err) {
-                      if (err) {
-                        return next(err);
+                        // Redirect user to original category
+                        Item.find(
+                          { category: category_id },
+                          function (err, item_list) {
+                            if (err) {
+                              return next(err);
+                            } else {
+                              res.render("category_read", {
+                                title: `${results.original_category.title} items`,
+                                category: results.original_category,
+                                items: item_list,
+                              });
+                            }
+                          }
+                        );
                       }
                     });
                   }
-
-                  // Prepare path of new image
-                  let updated_machine_title = updated_item.title
-                    .toLowerCase()
-                    .split(" ")
-                    .join("");
-                  let newPath = `public/images/${updated_machine_title}_${results.new_chosen_category.machine_title}.jpg`;
-
-                  // Move uploaded image from 'temp' path to permanent public/images path
-                  fs.rename(image.filepath, newPath, function (err) {
-                    if (err) {
-                      return next(err);
-                    } else {
+                  // If no image was uploaded
+                  if (image.size === 0) {
+                    // If a old image exists - rename it and keep it as default
+                    if (fs.existsSync(originalImagePath)) {
+                      fs.rename(
+                        originalImagePath,
+                        'public' + newItem_imgUrl,
+                        function (err) {
+                          if (err) {
+                            return next(err);
+                          } else {
+                            // Redirect user to original category
+                            Item.find(
+                              { category: category_id },
+                              function (err, item_list) {
+                                if (err) {
+                                  return next(err);
+                                } else {
+                                  res.render("category_read", {
+                                    title: `${results.original_category.title} items`,
+                                    category: results.original_category,
+                                    items: item_list,
+                                  });
+                                }
+                              }
+                            );
+                          }
+                        }
+                      );
+                    }
+                    // Else, just render without image
+                    else {
                       // Redirect user to original category
                       Item.find(
                         { category: category_id },
@@ -317,10 +354,22 @@ exports.item_update_post = function (req, res, next) {
                         }
                       );
                     }
-                  });
+                  }
                 }
-              }
-            });
+              });
+            }
+            // Warn user when an invalid file is uploaded
+            else {
+              res.render("item_update", {
+                title: "Edit your item",
+                category: results.original_category,
+                category_list: results.category_list,
+                item: results.original_item,
+                warnings: {
+                  img: "Only '.jpg', '.jpeg' and '.png' are allowed.",
+                },
+              });
+            }
           }
         }
       );
