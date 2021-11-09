@@ -26,10 +26,10 @@ block content
                 div.form-group.row.justify-content-center
                   div.col-lg-4.mx-3
                     label(for='price') Price:
-                    input#price.form-control(type='number' step="0.01" name='price' required value=populate ? populate.price : "" placeholder= "3.19" max="10000")
+                    input#price.form-control(type='number' step="0.01" name='price' required value=populate ? populate.price : "" placeholder= "3.19" min="0.01" max="10000")
                   div.col-lg-4.mx-3
                     label(for='stock') Stock:
-                    input#stock.form-control(type='number' name='stock' required value=populate ? populate.stock : "" placeholder = "312" maxLength="10000")
+                    input#stock.form-control(type='number' name='stock' required value=populate ? populate.stock : "" placeholder = "312" min="1" maxLength="10000")
                   div.form-group.row.justify-content-center
                     div.col-lg-4.mx-3
                       label(for='categoryId') Category:
