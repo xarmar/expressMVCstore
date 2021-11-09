@@ -4,7 +4,7 @@ const Category = require("../models/category");
 const fileIsValidImg = require("../helperFunctions/fileIsValidImg");
 const formidable = require("formidable");
 const Item = require("../models/item");
-var mongoose = require('mongoose');
+var mongoose = require("mongoose");
 const path = require("path");
 const fs = require("fs");
 
@@ -26,115 +26,92 @@ exports.item_create_get = function (req, res, next) {
 };
 // Creates a new item
 exports.item_create_post = function (req, res, next) {
-  let title;
-  let description;
-  let price;
-  let stock;
-  let categoryId;
-  let image;
+  let title = req.body.title;
+  let description = req.body.description;
+  let price = req.body.price;
+  let stock = req.body.stock;
+  let categoryId = req.body.categoryId;
+  let image = req.file;
 
-  let formData = new formidable.IncomingForm();
-  formData.parse(req, function (err, fields, files) {
-    if (err) {
-      return next(err);
-    } else {
-      // Get form fields
-      title = fields.title;
-      description = fields.description;
-      price = fields.price;
-      stock = fields.stock;
-      categoryId = fields.categoryId;
-      image = files.image;
-
-      // Declare valid extensions of image
-      let fileType = files.image.mimetype;
-
-      // If image has valid extension => accept and render new item in list
-      if (fileIsValidImg(fileType)) {
-
-        async.waterfall(
-          [
-            // 1 - Find category
-            function (callback) {
-              Category.findById(
-                categoryId,
-                function getCategory(err, categoryObj) {
-                  if (err) {
-                    return next(err);
-                  } else {
-                    callback(null, categoryObj);
-                  }
-                }
-              );
-            },
-            // 2 - Create item object
-            function (categoryObj, callback) {
-              let imgUrl = `/images/${title
-                .toLowerCase()
-                .split(" ")
-                .join("")}_${categoryObj.machine_title}.jpg`;
-
-              // Prepare Item object
-              let newItem = new Item({
-                title: title,
-                description: description,
-                price: price,
-                stock: stock,
-                category: categoryId,
-                imgUrl: imgUrl,
-              });
-              // Save Item Object in Database
-              newItem.save(function (err, itemObj) {
-                if (err) {
-                  return next(err);
-                } else {
-                  callback(null, categoryObj, itemObj);
-                }
-              });
-            },
-            // 3 - Save image in Server
-            function (categoryObj, itemObj, callback) {
-              let targetPath = path.join("public" + itemObj.imgUrl);
-              // Move image from 'temp' path to permanent public/images path
-              fs.rename(image.filepath, targetPath, function (err) {
-                if (err) {
-                  return next(err);
-                } else {
-                  callback(null, categoryObj);
-                }
-              });
-            },
-          ],
-          function (err, categoryObj) {
+  // If image has valid mimetype (jpg) => accept and render new item in list
+  if (fileIsValidImg(image.mimetype)) {
+    async.waterfall(
+      [
+        // 1 - Find category
+        function (callback) {
+          Category.findById(categoryId, function getCategory(err, categoryObj) {
             if (err) {
               return next(err);
             } else {
-              res.redirect(categoryObj.url);
+              callback(null, categoryObj);
             }
-          }
-        );
+          });
+        },
+        // 2 - Create item object
+        function (categoryObj, callback) {
+          let imgUrl = `/images/${title.toLowerCase().split(" ").join("")}_${
+            categoryObj.machine_title
+          }.jpg`;
+
+          // Prepare Item object
+          let newItem = new Item({
+            title: title,
+            description: description,
+            price: price,
+            stock: stock,
+            category: categoryId,
+            imgUrl: imgUrl,
+          });
+          // Save Item Object in Database
+          newItem.save(function (err, itemObj) {
+            if (err) {
+              return next(err);
+            } else {
+              callback(null, categoryObj, itemObj);
+            }
+          });
+        },
+        // 3 - Save image in Server
+        function (categoryObj, itemObj, callback) {
+          let targetPath = path.join("public" + itemObj.imgUrl);
+          // Move image from 'temp' path to permanent public/images path
+          fs.rename(image.path, targetPath, function (err) {
+            if (err) {
+              return next(err);
+            } else {
+              callback(null, categoryObj);
+            }
+          });
+        },
+      ],
+      function (err, categoryObj) {
+        if (err) {
+          return next(err);
+        } else {
+          res.redirect(categoryObj.url);
+        }
+      }
+    );
+  } else {
+    // Reject invalid extension and warn user
+    Category.findById(categoryId).exec(function (err, category) {
+      if (err) {
+        return next(err);
       } else {
-        // Reject invalid extension and warn user
-        Category.findById(categoryId).exec(function (err, category) {
-          if (err) {
-            return next(err);
-          } else {
-            res.render("item_create", {
-              title: "Create new item",
-              category: category,
-              warnings: { img: "Only '.jpg', '.jpeg' and '.png' are allowed." },
-              populate: {
-                title: title,
-                description: description,
-                price: price,
-                stock: stock,
-              },
-            });
-          }
+        res.render("item_create", {
+          title: "Create new item",
+          category: category,
+          warnings: { img: "Only '.jpg', '.jpeg' and '.png' are allowed." },
+          populate: {
+            title: title,
+            description: description,
+            price: price,
+            stock: stock,
+          },
         });
       }
-    }
-  });
+    });
+  }
 };
 
 // Render view for editing an item
