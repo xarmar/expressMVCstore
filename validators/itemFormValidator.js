@@ -1,6 +1,6 @@
 const {check, validationResult} = require('express-validator');
 
-exports.validateItem = [
+exports.itemFormValidator = [
   check('title')
     .trim()
     .escape()
