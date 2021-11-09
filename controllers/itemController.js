@@ -157,180 +157,167 @@ exports.item_update_post = function (req, res, next) {
   let item_id = req.params.item;
   let category_id = req.params.category;
 
-  let title;
-  let description;
-  let price;
-  let stock;
-  let categoryId;
-  let image;
+  let title = req.body.title;
+  let description = req.body.description;
+  let price = req.body.price;
+  let stock = req.body.stock;
+  let categoryId = req.body.categoryId;
+  let image = req.file;
 
-  let formData = new formidable.IncomingForm();
-  formData.parse(req, function (err, fields, files) {
-    if (err) {
-      return next(err);
-    } else {
-      // Get new data from form fields
-      title = fields.title;
-      description = fields.description;
-      price = fields.price;
-      stock = fields.stock;
-      categoryId = fields.categoryId,
-      image = files.image;
+  async.parallel(
+    {
+      // 1 - Get original item object
+      original_item: function (callback) {
+        Item.findById(item_id).exec(callback);
+      },
+      // 2 - Get original category object
+      original_category: function (callback) {
+        Category.findById(category_id).exec(callback);
+      },
+      // 3 - Get category list of original category
+      category_list: function (callback) {
+        Category.find()
+          .sort([["title", "ascending"]])
+          .exec(callback);
+      },
+      // 4 - Get new chosen category item object
+      new_chosen_category: function (callback) {
+        Category.findById(categoryId).exec(callback);
+      },
+    },
+    function (err, results) {
+      if (err) {
+        return next(err);
+      } else {
+        let originalImagePath =
+          "public/images/" +
+          results.original_item.machine_title +
+          "_" +
+          results.original_category.machine_title +
+          ".jpg";
 
-      async.parallel(
-        {
-          // 1 - Get original item object
-          original_item: function (callback) {
-            Item.findById(item_id).exec(callback);
-          },
-          // 2 - Get original category object
-          original_category: function (callback) {
-            Category.findById(category_id).exec(callback);
-          },
-          // 3 - Get category list of original category
-          category_list: function (callback) {
-            Category.find()
-              .sort([["title", "ascending"]])
-              .exec(callback);
-          },
-          // 4 - Get new chosen category item object
-          new_chosen_category: function (callback) {
-            Category.findById(categoryId).exec(callback);
-          },
-        },
-        function (err, results) {
-          if (err) {
-            return next(err);
-          } else {
-            // If user uploads a valid image OR no image 
-            if (
-              fileIsValidImg(image.mimetype) ||
-              image.mimetype === "application/octet-stream"
-            ) {
-              let originalImagePath =
-                "public/images/" +
-                results.original_item.machine_title +
-                "_" +
-                results.original_category.machine_title +
-                '.jpg';
+        let newItem_machineTitle = title.toLowerCase().split(" ").join("");
+        let newCategory_machineTitle =
+          results.new_chosen_category.machine_title;
+        let newItem_imgUrl =
+          "/images/" +
+          newItem_machineTitle +
+          "_" +
+          newCategory_machineTitle +
+          ".jpg";
 
-              // Prepare new item Imgurl
-              let newItem_machineTitle = title
-                .toLowerCase()
-                .split(" ")
-                .join("");
-              let newCategory_machineTitle =
-                results.new_chosen_category.machine_title;
+        // Prepare new item that will replace original_item
+        let updated_item = {
+          title: title,
+          description: description,
+          price: price,
+          stock: stock,
+          category: mongoose.Types.ObjectId(categoryId),
+          imgUrl: newItem_imgUrl,
+        };
 
-              let newItem_imgUrl =
-              "/images/" +
-              newItem_machineTitle +
-              "_" +
-              newCategory_machineTitle + 
-              ".jpg"
-
-              // Prepare new item that will replace original_item
-              let updated_item = {
-                title: title,
-                description: description,
-                price: price,
-                stock: stock,
-                category: mongoose.Types.ObjectId(categoryId),
-                imgUrl: newItem_imgUrl
-              };
-
-              // Update item in database
-              Item.findByIdAndUpdate(item_id, updated_item, function(err, updatedItem) {
-                if(err) {
-                  return next(err);
-                }
-                else{
-                  
-                  // If an image was uploaded - delete old one, create new one
-                  if (fileIsValidImg(image.mimetype)) {
-                    // Delete old image
-                    if (fs.existsSync(originalImagePath)) {
-                      fs.unlink(originalImagePath, function (err) {
-                        if (err) {
-                          return next(err);
-                        }
-                      });
+        if (image) {
+          // If user uploads a valid image
+          if (fileIsValidImg(image.mimetype)) {
+            // Update item in database
+            Item.findByIdAndUpdate(item_id, updated_item, function (err) {
+              if (err) {
+                return next(err);
+              } else {
+                // Delete old image
+                if (fs.existsSync(originalImagePath)) {
+                  fs.unlink(originalImagePath, function (err) {
+                    if (err) {
+                      return next(err);
                     }
+                  });
+                }
 
-                    // Move uploaded image from 'temp' path to permanent public/images path
-                    fs.rename(image.filepath, 'public' + newItem_imgUrl, function (err) {
-                      if (err) {
-                        return next(err);
-                      } else {
-                        // Redirect user to original category
-                        Item.find(
-                          { category: category_id },
-                          function (err, item_list) {
-                            if (err) {
-                              return next(err);
-                            } else {
-                              res.render("category_read", {
-                                title: `${results.original_category.title} items`,
-                                category: results.original_category,
-                                items: item_list,
-                              });
-                            }
-                          }
-                        );
-                      }
-                    });
-                  }
-                  // If no image was uploaded
-                  if (image.size === 0) {
-                    // If a old image exists - rename it and keep it as default
-                    if (fs.existsSync(originalImagePath)) {
-                      fs.rename(
-                        originalImagePath,
-                        'public' + newItem_imgUrl,
-                        function (err) {
+                // Move uploaded image from 'temp' path to permanent public/images path
+                fs.rename(
+                  image.path,
+                  "public" + newItem_imgUrl,
+                  function (err) {
+                    if (err) {
+                      return next(err);
+                    } else {
+                      // Redirect user to original category
+                      Item.find(
+                        { category: category_id },
+                        function (err, item_list) {
                           if (err) {
                             return next(err);
                           } else {
-                            // Redirect user to original category
-                            Item.find(
-                              { category: category_id },
-                              function (err, item_list) {
-                                if (err) {
-                                  return next(err);
-                                } else {
-                                  res.render("category_read", {
-                                    title: `${results.original_category.title} items`,
-                                    category: results.original_category,
-                                    items: item_list,
-                                  });
-                                }
-                              }
-                            );
+                            res.render("category_read", {
+                              title: `${results.original_category.title} items`,
+                              category: results.original_category,
+                              items: item_list,
+                            });
                           }
                         }
                       );
                     }
                   }
-                }
-              });
-            }
-            // Warn user when an invalid file is uploaded
-            else {
-              res.render("item_update", {
-                title: "Edit your item",
-                category: results.original_category,
-                category_list: results.category_list,
-                item: results.original_item,
-                warnings: {
-                  img: "Only '.jpg', '.jpeg' and '.png' are allowed.",
-                },
-              });
-            }
+                );
+              }
+            });
+          }
+
+          // If invalid file was uploaded
+          else {
+            // Warn user an invalid file was  uploaded
+            res.render("item_update", {
+              title: "Edit your item",
+              category: results.original_category,
+              category_list: results.category_list,
+              item: results.original_item,
+              warnings: {
+                img: "Only '.jpg', '.jpeg' and '.png' are allowed.",
+              },
+            });
           }
         }
-      );
+        // If no image was uploaded
+        else {
+          // Update item in database
+          Item.findByIdAndUpdate(item_id, updated_item, function (err) {
+            if (err) {
+              return next(err);
+            } else {
+              // If an old image exists - rename it and keep it as default
+              if (fs.existsSync(originalImagePath)) {
+                fs.rename(
+                  originalImagePath,
+                  "public" + newItem_imgUrl,
+                  function (err) {
+                    if (err) {
+                      return next(err);
+                    } else {
+                      // Redirect user to original category
+                      Item.find(
+                        { category: category_id },
+                        function (err, item_list) {
+                          if (err) {
+                            return next(err);
+                          } else {
+                            res.render("category_read", {
+                              title: `${results.original_category.title} items`,
+                              category: results.original_category,
+                              items: item_list,
+                            });
+                          }
+                        }
+                      );
+                    }
+                  }
+                );
+              }
+            }
+          });
+        }
+      }
     }
-  });
+  );
 };
 
 // Render view for deleting an item
