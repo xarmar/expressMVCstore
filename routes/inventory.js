@@ -12,27 +12,33 @@ const item_controller = require("../controllers/itemController");
 // GET - Redirect user from "/" to "/shop"
 router.get("/", category_controller.category_list_get);
 
-// GET - Update Item request
+// --- ITEMS ---
+// UPDATE Item request
 router.get("/category/*/:category/:item/edit", item_controller.item_update_get)
-
-// POST - Update Item request
 router.post("/category/*/:category/:item/edit", upload.single('image'), validators.itemFormValidator, item_controller.item_update_post)
 
-// Get - Delete Item request
+// DELETE Item request
 router.get("/category/*/:category/:item/delete", item_controller.item_delete_get)
-// POST - Delete Item request
 router.post("/category/*/:category/:item/delete", upload.none(), item_controller.item_delete_post)
 
-// GET - Create Item request
+// CREATE Item request
 router.get("/category/*/:category/new", item_controller.item_create_get);
-// POST - Create Item request
 router.post("/category/*/:category/new", upload.single('image'), validators.itemFormValidator, item_controller.item_create_post)
 
-// GET - Read Category request
-router.get("/category/*/:id", category_controller.category_get);
+// --- CATEGORIES ---
 
 
-// GET - Redirect user to edit item page
-// router.get("/item/:id/edit", item_controller.item_edit_get);
+//  CREATE Category request
+router.get("/category/new", category_controller.category_create_get);
+router.post("/category/new", upload.single('image'), validators.categoryFormValidator, category_controller.category_create_post);
+
+// DELETE Category request
+router.get("/category/*/:category/delete", category_controller.category_delete_get);
+router.post("/category/*/:category/delete", upload.none(), category_controller.category_delete_post);
+
+// READ Category request
+router.get("/category/*/:category", category_controller.category_get);
+
+
 
 module.exports = router;
