@@ -2,7 +2,6 @@ const async = require("async");
 const { body, validationResult } = require("express-validator");
 const Category = require("../models/category");
 const fileIsValidImg = require("../helperFunctions/fileIsValidImg");
-const formidable = require("formidable");
 const Item = require("../models/item");
 var mongoose = require("mongoose");
 const path = require("path");
