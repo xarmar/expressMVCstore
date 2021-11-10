@@ -13,23 +13,29 @@ block content
         div.col-lg-12.category--container
           div.col-12.gradient--overlay.gradient--overlay-orangeyellow
             div.category--content.flex-column
-              h4.text-center You're about to delete the #[u #{category.title}] category... 
-              form(method='POST' action='' enctype="multipart/form-data")
-                div.form-group.row.justify-content-center
-                  div.col-lg-4.mx-3
-                    label(for='title') Title:
-                    input#title.form-control(name='title' required value=category.title disabled)
-                  div.col-lg-4.mx-3
-                    label(for='description') Description:
-                    input#description.form-control(name='description' required value=category.description disabled)
+              if conflicting_items
+                h4.text-center Almost there! Before you delete the #[u #{category.title}] category... 
+                p.mt-2 
+                  | Please delete all items associated with it: 
+                  each item in conflicting_items
+                    br
+                    | - #{item.title} 
+                a.text-center(href=category.url) 
+                  button.btn--edit.btn.btn-sm.btn-success Visit #{category.title} Category
+              else 
+                h4.text-center You're about to delete the #[u #{category.title}] category... 
+                form(method='POST' action='' enctype="multipart/form-data")
                   div.form-group.row.justify-content-center
                     div.col-lg-4.mx-3
-                      label(for='image') Category image:
-                      input#imageUrlt.form-control(type= 'file' name='image' value="" disabled)
-                  div.form-group.row.justify-content-center
-                    div.col-12.d-flex.mt-4.justify-content-center
-                      input.btn.btn-danger(type="submit" value="Delete category")
-    if conflicting_items > 0
-      h1 HELLO
-      each item in conflicting_items
-        p You must delete #{item.title} before deleating of this category.
+                      label(for='title') Title:
+                      input#title.form-control(name='title' required value=category.title disabled)
+                    div.col-lg-4.mx-3
+                      label(for='description') Description:
+                      input#description.form-control(name='description' required value=category.description disabled)
+                    div.form-group.row.justify-content-center
+                      div.col-lg-4.mx-3
+                        label(for='image') Category image:
+                        input#imageUrlt.form-control(type= 'file' name='image' value="" disabled)
+                    div.form-group.row.justify-content-center
+                      div.col-12.d-flex.mt-4.justify-content-center
+                        input.btn.btn-danger(type="submit" value="Delete category")
