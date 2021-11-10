@@ -56,3 +56,38 @@ exports.itemFormValidator = [
     next();
   },
 ];
+
+exports.categoryFormValidator = [
+  check('title')
+    .trim()
+    .escape()
+    .not()
+    .isEmpty()
+    .withMessage('Title can not be empty!')
+    .bail()
+    .isLength({min: 1})
+    .withMessage('Minimum 1 character required!')
+    .bail()
+    .isLength({max: 20})
+    .withMessage('Maximum 20 characters!')
+    .bail(),
+  check('description')
+    .trim()
+    .escape()
+    .not()
+    .isEmpty()
+    .withMessage('Description can not be empty!')
+    .bail()
+    .isLength({min: 1})
+    .withMessage('Minimum 1 character required!')
+    .bail()
+    .isLength({max: 30})
+    .withMessage('Maximum 30 characters!')
+    .bail(),
+  (req, res, next) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty())
+      return res.status(422).json({errors: errors.array()});
+    next();
+  },
+];
