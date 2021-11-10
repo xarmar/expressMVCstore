@@ -1,0 +1,32 @@
+extends layout
+
+block content
+  div.container
+    div.col-12.category--background
+      div.gradient--overlay.gradient--overlay-yellowpink
+      h5 #[strong Your Inventory]
+      div.category--navigation-container.d-flex
+        a(href=`/inventory`) Back To Inventory
+    div.container.px-0
+      div.row.d-flex.mt-2.mx-0.justify-content-between
+        div.col-lg-12.item--container
+          div.col-12.gradient--overlay.gradient--overlay-orangeyellow
+            div.item--content.flex-column
+              h4.text-center Adding a new category...
+              form(method='post' action='' enctype="multipart/form-data")
+                div.form-group.row.justify-content-center
+                  div.col-lg-4.mx-3
+                    label(for='title') Title:
+                    input#title.form-control(name='title' required value=populate ? populate.title : "" placeholder="Your category title...")
+                  div.col-lg-4.mx-3
+                    label(for='description') Description:
+                    input#description.form-control(name='description' required value=populate ? populate.description : "" placeholder="Your category description..." maxLength="30")
+                div.form-group.row.justify-content-center
+                    div.col-lg-4.mx-3
+                      label(for='image') Category image:
+                      input#image.form-control(type= 'file' name='image' required accept=".jpg, .jpeg, .png")
+                      if warnings
+                        p.text-info.mt-1.mx-3 #{warnings.img}
+                div.form-group.row.justify-content-center
+                  div.col-12.d-flex.mt-4.justify-content-center
+                    input.btn.btn-primary(type="submit" value="Create category")
