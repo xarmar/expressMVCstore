@@ -9,6 +9,8 @@ block content
       div.category--navigation-container.d-flex
         if items.length > 0
           a(href=`${category._id}/new`) Add new Item
+        else 
+          a(href=`/inventory/category/${category.machine_title}/${category._id}/delete`) Delete Category
         a(href="/inventory") Back to Inventory
   if items.length > 0
       div.container
