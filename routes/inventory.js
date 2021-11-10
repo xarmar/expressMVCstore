@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const validators = require("../validators/itemFormValidator");
+const validators = require("../validators/expressValidators");
 const multer  = require('multer');
 const upload = multer({ dest: 'public/images' });
 
