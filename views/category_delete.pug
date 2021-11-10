@@ -1,0 +1,35 @@
+extends layout
+
+block content
+  div.container
+    div.col-12.category--background(style=`background-image: url(${category.imgUrl})`)
+      div.gradient--overlay.gradient--overlay-yellowpink
+      h5 #[strong #{category.title}]
+      p #{category.description}
+      div.category--navigation-container.d-flex
+        a(href="/inventory") Back to Inventory
+    div.container.px-0
+      div.row.d-flex.mt-2.mx-0.justify-content-between
+        div.col-lg-12.category--container
+          div.col-12.gradient--overlay.gradient--overlay-orangeyellow
+            div.category--content.flex-column
+              h4.text-center You're about to delete the #[u #{category.title}] category... 
+              form(method='POST' action='' enctype="multipart/form-data")
+                div.form-group.row.justify-content-center
+                  div.col-lg-4.mx-3
+                    label(for='title') Title:
+                    input#title.form-control(name='title' required value=category.title disabled)
+                  div.col-lg-4.mx-3
+                    label(for='description') Description:
+                    input#description.form-control(name='description' required value=category.description disabled)
+                  div.form-group.row.justify-content-center
+                    div.col-lg-4.mx-3
+                      label(for='image') Category image:
+                      input#imageUrlt.form-control(type= 'file' name='image' value="" disabled)
+                  div.form-group.row.justify-content-center
+                    div.col-12.d-flex.mt-4.justify-content-center
+                      input.btn.btn-danger(type="submit" value="Delete category")
+    if conflicting_items > 0
+      h1 HELLO
+      each item in conflicting_items
+        p You must delete #{item.title} before deleating of this category.
