@@ -22,7 +22,11 @@ CategorySchema.virtual('url')
   return `/inventory/category/${this.machine_title}/${this._id}`
 });
 
-
+// Virtual for machine title
+CategorySchema.virtual('image_path')
+.get(function() {
+  return `public/images/${this.title.toLowerCase().split(" ").join("")}_category.jpg`
+});
 
 //Export model
 module.exports = mongoose.model('Category', CategorySchema);

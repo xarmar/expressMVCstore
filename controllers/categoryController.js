@@ -148,8 +148,9 @@ exports.category_delete_post = function (req, res, next) {
         return next(err);
       }
       else {
-        if(results.items === undefined) {
-          let imgPath = path.join("public" + `${results.category.title}_category`);
+        // If no items are found under a given category,delete it
+        if(!results.items.length) {
+          let imgPath = results.category.image_path;
           Category.findByIdAndDelete(results.category._id).exec(function(err) {
             if(err) {
               return next(err);
