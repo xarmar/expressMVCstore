@@ -25,9 +25,8 @@ router.post("/category/*/:category/:item/delete", upload.none(), item_controller
 router.get("/category/*/:category/new", item_controller.item_create_get);
 router.post("/category/*/:category/new", upload.single('image'), validators.itemFormValidator, item_controller.item_create_post)
 
+
 // --- CATEGORIES ---
-
-
 //  CREATE Category request
 router.get("/category/new", category_controller.category_create_get);
 router.post("/category/new", upload.single('image'), validators.categoryFormValidator, category_controller.category_create_post);
@@ -35,6 +34,10 @@ router.post("/category/new", upload.single('image'), validators.categoryFormVali
 // DELETE Category request
 router.get("/category/*/:category/delete", category_controller.category_delete_get);
 router.post("/category/*/:category/delete", upload.none(), category_controller.category_delete_post);
+
+// Update Category request
+router.get("/category/*/:category/edit", category_controller.category_update_get);
+router.post("/category/*/:category/edit", upload.single('image'), validators.categoryFormValidator, category_controller.category_update_post);
 
 // READ Category request
 router.get("/category/*/:category", category_controller.category_get);
