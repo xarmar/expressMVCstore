@@ -1,5 +1,7 @@
 @use "../base/typography.scss";
+@use "../abstracts/custom_variables.scss" as cv;
 
+// The vanilla card
 .content--card {
   box-shadow: 0px 0px 5px 1px rgb(0 0 0 / 20%);
   display: flex;
@@ -23,5 +25,19 @@
   .content--card-right {
     background-size: cover;
     min-height: 150px;
+  }
+}
+
+// The fliped card when width < 1200px
+.content--card-reverse { 
+  @extend .content--card;
+  @media screen and (max-width: cv.$xl - 1) {
+    flex-direction: row-reverse;
+    .col-5 {
+      width: 58.33333333%;
+    }
+    .col-7 {
+      width: 41.66666667%
+    }
   }
 }

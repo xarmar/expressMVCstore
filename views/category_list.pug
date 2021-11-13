@@ -10,26 +10,28 @@ block content
   if category_list.length > 0
       div.container--fluid
         div.row.d-flex.mt-2.mx-0
+          -var normal_card = true
           each category in category_list
-              div.col-lg-6.mb-1.mt-1.d-flex
-                div.col-12.content--card
-                  div.col-7.content--card-left.category--content
-                    div
-                      h3.content--card-title #[strong #{category.title}]
-                      if category.description 
-                        p.content--card-description #{category.description}
-                    div.content--card-options
-                      a(href=category.url) 
-                        button.btn--edit.btn.btn-sm.btn-success View
-                      a(href=`${category.url}/edit`) 
-                        button.btn--edit.btn.btn-sm.btn-secondary Edit
-                      a(href=`${category.url}/delete`) 
-                        button.btn--edit.btn.btn-sm.btn-danger Delete
-                  div.col-5.content--card-right(style=`background-image: url(${category.imgUrl}` alt=category.title)
+            div.col-xl-6.mb-1.mt-1.d-flex
+              div.col-12(class= normal_card ? 'content--card' : 'content--card-reverse')
+                - var normal_card = !normal_card
+                div.col-7.content--card-left.category--content
+                  div
+                    h3.content--card-title #[strong #{category.title}]
+                    if category.description 
+                      p.content--card-description #{category.description}
+                  div.content--card-options
+                    a(href=category.url) 
+                      button.btn--edit.btn.btn-sm.btn-success View
+                    a(href=`${category.url}/edit`) 
+                      button.btn--edit.btn.btn-sm.btn-secondary Edit
+                    a(href=`${category.url}/delete`) 
+                      button.btn--edit.btn.btn-sm.btn-danger Delete
+                div.col-5.content--card-right(style=`background-image: url(${category.imgUrl}` alt=category.title)
   else
       div.container--fluid
         div.row.d-flex.mt-2.mx-0.justify-content-between
-          div.col-lg-12.category--container
+          div.col-xl-12.category--container
             div.col-12.gradient--overlay.gradient--overlay-orangeyellow.align-middle.align-self-center
               div.category--content.d-flex.justify-content-center
                 div.justify-content-center
