@@ -198,7 +198,7 @@ exports.category_delete_post = function (req, res, next) {
   );
 };
 
-// Updates a category (WIP)
+// Updates a category
 exports.category_update_get = function (req, res, next) {
   let category_id = req.params.category;
 
@@ -294,7 +294,7 @@ exports.category_update_post = function (req, res, next) {
                         promiseUpdateDb.push(p);
                       });
 
-                      // Update images locally
+                      // Rename item images to match new category
                       let promiseRenameImages = [];
                       Promise.all(promiseUpdateDb).then(imgUrls => {
                         imgUrls.forEach(urlPair => {
@@ -314,7 +314,7 @@ exports.category_update_post = function (req, res, next) {
                         });
                       }).catch(err => next(err));
 
-                      // If images were updates in db and locally
+                      // If images were updated in db and locally
                       Promise.all(promiseRenameImages).then(() => {
                         // Redirect user to inventory
                         Category.find()
@@ -324,7 +324,7 @@ exports.category_update_post = function (req, res, next) {
                             return next(err);
                           }
                           else {
-                            //Successful, so render
+                            // Redirect user to inventory
                             res.render("category_list", {
                               title: "Inventory List",
                               category_list: list_categories
@@ -332,7 +332,6 @@ exports.category_update_post = function (req, res, next) {
                           }
                         });
                       }).catch(err => next(err));
-
                     }
                   });
               }
@@ -366,34 +365,65 @@ exports.category_update_post = function (req, res, next) {
                     if (err) {
                       return next(err);
                     } else {
-                      // Update all items imgUrls
+                      // Update all items imgUrls in Db
+                      let promiseUpdateDb = [];
                       results.items.forEach(item => {
-                        let newImgUrl = getNewImagePath(original_category_machine_title, newCategory_machine_title, item.imgUrl);
-                        let updateImgPath = {
-                          imgUrl: newImgUrl
-                        }
-                        Item.findByIdAndUpdate(item._id, updateImgPath, function(err) {
+                        let p = new Promise((resolve, reject) => {
+                          let previousUrl = item.imgUrl;
+                          let newImgUrl = getNewImagePath(original_category_machine_title, newCategory_machine_title, previousUrl);
+                          let updateImgPath = {
+                            imgUrl: newImgUrl
+                          }
+                          Item.findByIdAndUpdate(item._id, updateImgPath, function(err) {
+                            if(err) {
+                              reject(err);
+                            }
+                            else {
+                              resolve([previousUrl, newImgUrl]);
+                            }
+                          });
+                        })
+                        promiseUpdateDb.push(p);
+                      });
+
+                      // Rename item images to match new category
+                      let promiseRenameImages = [];
+                      Promise.all(promiseUpdateDb).then(imgUrls => {
+                        imgUrls.forEach(urlPair => {
+                          let p = new Promise((resolve, reject) => {
+                            let previousImgPath = 'public' + urlPair[0];
+                            let newImgPath = 'public' + urlPair[1];
+                            fs.rename(previousImgPath, newImgPath, function(err) {
+                              if(err) {
+                                reject(err);
+                              }
+                              else {
+                                resolve();
+                              }
+                            });
+                          })
+                          promiseRenameImages.push(p);
+                        });
+                      }).catch(err => next(err));
+
+                      // If images were updated in db and locally
+                      Promise.all(promiseRenameImages).then(() => {
+                        // Redirect user to inventory
+                        Category.find()
+                        .sort([["title", "ascending"]])
+                        .exec(function (err, list_categories) {
                           if (err) {
-                            return next(err)
+                            return next(err);
+                          }
+                          else {
+                            // Redirect user to inventory
+                            res.render("category_list", {
+                              title: "Inventory List",
+                              category_list: list_categories
+                            });
                           }
                         });
-                      });
-                      
-                      // Redirect user to inventory
-                      Category.find()
-                      .sort([["title", "ascending"]])
-                      .exec(function (err, list_categories) {
-                        if (err) {
-                          return next(err);
-                        }
-                        else {
-                          //Successful, so render
-                          res.render("category_list", {
-                            title: "Inventory List",
-                            category_list: list_categories
-                          });
-                        }
-                      });
+                      }).catch(err => next(err));
                     }
                   }
                 );
