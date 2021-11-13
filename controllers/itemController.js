@@ -3,11 +3,11 @@ const { body, validationResult } = require("express-validator");
 const Category = require("../models/category");
 const fileIsValidImg = require("../helperFunctions/fileIsValidImg");
 const Item = require("../models/item");
-var mongoose = require("mongoose");
+const mongoose = require("mongoose");
 const path = require("path");
 const fs = require("fs");
 
-// Render view for creating new item
+// Creates a new item
 exports.item_create_get = function (req, res, next) {
   let category_id = req.params.category;
 
@@ -23,7 +23,6 @@ exports.item_create_get = function (req, res, next) {
     }
   });
 };
-// Creates a new item
 exports.item_create_post = function (req, res, next) {
   let title = req.body.title;
   let description = req.body.description;
@@ -113,7 +112,7 @@ exports.item_create_post = function (req, res, next) {
   }
 };
 
-// Render view for editing an item
+// Updates an item
 exports.item_update_get = function (req, res, next) {
   let category_id = req.params.category;
   let item_id = req.params.item;
@@ -141,7 +140,7 @@ exports.item_update_get = function (req, res, next) {
       } else {
         // Successful, so render.
         res.render("item_update", {
-          title: "Edit your item",
+          title: `Edit ${results.item.title}`,
           category: results.category,
           category_list: results.category_list,
           item: results.item,
@@ -150,7 +149,6 @@ exports.item_update_get = function (req, res, next) {
     }
   );
 };
-// Edit a item
 exports.item_update_post = function (req, res, next) {
   // Get original item and category id's
   let item_id = req.params.item;
@@ -319,7 +317,7 @@ exports.item_update_post = function (req, res, next) {
   );
 };
 
-// Render view for deleting an item
+// Deletes an item
 exports.item_delete_get = function (req, res, next) {
   let category_id = req.params.category;
   let item_id = req.params.item;
@@ -341,7 +339,7 @@ exports.item_delete_get = function (req, res, next) {
       } else {
         // Successful, so render.
         res.render("item_delete", {
-          title: "Delete your item",
+          title: `Delete ${results.item.title}`,
           category: results.category,
           item: results.item,
         });
@@ -349,7 +347,6 @@ exports.item_delete_get = function (req, res, next) {
     }
   );
 };
-// Delete an item
 exports.item_delete_post = function (req, res, next) {
   let item_id = req.params.item;
   let category_id = req.params.category;
