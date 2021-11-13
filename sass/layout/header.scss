@@ -1,0 +1,55 @@
+/* Style category cards */
+.category--background {
+  background-size: cover; 
+  display: flex;
+  flex-direction: column;
+  height: 150px;
+  justify-content: center;
+  position: relative;
+  padding: 0 25px;
+  h5 {
+    margin-left: 20px;
+    margin-top: 10px;
+    position: relative;
+    text-decoration: underline;
+  }
+  p {
+    margin-left: 20px;
+    position: relative;
+  }
+}
+
+/* Style 'Back to Shop' anchor tag in category detail page */
+.category--navigation-container {
+  justify-content: flex-end;
+  z-index: 10;
+  a {
+    color: black;
+    display: flex;
+    margin-right: 20px;
+    text-decoration: none;
+    &:hover {
+      color:black;
+      text-decoration: underline;
+    }
+  }
+}
+
+.gradient--overlay{
+  &::after {
+    content: "";
+    height: 100%;
+    left: 0;
+    opacity: .85;
+    position: absolute;
+    top: 0;
+    width: 100%;
+  }
+  &.gradient--overlay-yellowpink::after {
+    background-image: linear-gradient(45deg, #eaee44, pink);
+  }
+  &.gradient--overlay-orangeyellow::after {
+    background-image: linear-gradient(-45deg, orange, #eaee44);
+  }
+
+}

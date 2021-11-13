@@ -1,0 +1,9 @@
+@use "typography";
+
+body {
+  font-family: typography.$font_prompt;
+}
+
+.row>* {
+  padding: 0 !important;
+}
