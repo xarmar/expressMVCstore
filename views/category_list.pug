@@ -1,32 +1,33 @@
 extends layout
 
 block content
-  div.container
+  div.container--fluid
     div.col-12.category--background
       div.gradient--overlay.gradient--overlay-yellowpink
       h5 #[strong Your Inventory]
       div.category--navigation-container.d-flex
         a(href=`inventory/category/new`) Add new category
   if category_list.length > 0
-      div.container
-        div.row.d-flex.mt-2.mx-0.justify-content-between
+      div.container--fluid
+        div.row.d-flex.mt-2.mx-0
           each category in category_list
-              div.col-lg-6.category--container(style=`background-image: url(${category.imgUrl}` alt=category.title)
-                div.col-12.gradient--overlay.gradient--overlay-orangeyellow
-                  div.category--content
+              div.col-lg-6.mb-1.mt-1.d-flex
+                div.col-12.content--card
+                  div.col-7.content--card-left.category--content
                     div
-                      p #[strong #{category.title}]
+                      h3.content--card-title #[strong #{category.title}]
                       if category.description 
-                        p #{category.description}
-                    div.category--options 
+                        p.content--card-description #{category.description}
+                    div.content--card-options
                       a(href=category.url) 
                         button.btn--edit.btn.btn-sm.btn-success View
                       a(href=`${category.url}/edit`) 
                         button.btn--edit.btn.btn-sm.btn-secondary Edit
                       a(href=`${category.url}/delete`) 
                         button.btn--edit.btn.btn-sm.btn-danger Delete
+                  div.col-5.content--card-right(style=`background-image: url(${category.imgUrl}` alt=category.title)
   else
-      div.container
+      div.container--fluid
         div.row.d-flex.mt-2.mx-0.justify-content-between
           div.col-lg-12.category--container
             div.col-12.gradient--overlay.gradient--overlay-orangeyellow.align-middle.align-self-center
