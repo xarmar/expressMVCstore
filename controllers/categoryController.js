@@ -2,52 +2,9 @@ const async = require("async");
 const Category = require("../models/category");
 const fileIsValidImg = require("../helperFunctions/fileIsValidImg");
 const getNewImagePath = require("../helperFunctions/getNewImagePath");
-
 const Item = require("../models/item");
 const path = require("path");
 const fs = require("fs");
-
-// Display list of all Categories.
-exports.category_list_get = function (req, res, next) {
-  Category.find()
-    .sort([["title", "ascending"]])
-    .exec(function (err, list_categories) {
-      if (err) {
-        return next(err);
-      }
-      else {
-        //Successful, so render
-        res.render("category_list", {
-          title: "Inventory List",
-          category_list: list_categories,
-        });
-      }
-    });
-};
-// Display a category and all it's items 
-exports.category_get = function (req, res, next) {
-  var id = req.params.category;
-  async.parallel(
-    {
-      found_category: function (callback) {
-        Category.findById(id).exec(callback);
-      },
-      items: function (callback) {
-        Item.find({ category: id }).exec(callback);
-      },
-    },
-    function (err, results) {
-      if (err) {
-        return next(err);
-      }
-      res.render("category_read", {
-        title: `${results.found_category.title} items`,
-        category: results.found_category,
-        items: results.items,
-      });
-    }
-  );
-};
 
 // Creates a new category
 exports.category_create_get = function (req, res, next) {
@@ -117,28 +74,29 @@ exports.category_create_post = function (req, res, next) {
   }
 };
 
-// Deletes a category
-exports.category_delete_get = function (req, res, next) {
-  let id = req.params.category;
-
-  Category.findById(id).exec(function (err, category) {
-    if (err) {
-      return next(err);
-    } else {
-      // Successful, so render.
-      res.render("category_delete", {
-        title: `Delete ${category.title} category`,
-        category: category,
-      });
-    }
-  });
+// Displays list of all Categories.
+exports.category_list_get = function (req, res, next) {
+  Category.find()
+    .sort([["title", "ascending"]])
+    .exec(function (err, list_categories) {
+      if (err) {
+        return next(err);
+      }
+      else {
+        //Successful, so render
+        res.render("category_list", {
+          title: "Inventory List",
+          category_list: list_categories,
+        });
+      }
+    });
 };
-exports.category_delete_post = function (req, res, next) {
+// Displays a category and all it's items 
+exports.category_get = function (req, res, next) {
   let id = req.params.category;
-
   async.parallel(
     {
-      category: function (callback) {
+      found_category: function (callback) {
         Category.findById(id).exec(callback);
       },
       items: function (callback) {
@@ -149,51 +107,11 @@ exports.category_delete_post = function (req, res, next) {
       if (err) {
         return next(err);
       }
-      else {
-        // If no items are found under a given category,delete it
-        if(!results.items.length) {
-          let imgPath = results.category.image_path;
-          Category.findByIdAndDelete(results.category._id).exec(function(err) {
-            if(err) {
-              return next(err);
-            }
-            else {
-              // Delete category image
-              if (fs.existsSync(imgPath)) {
-                fs.unlink(imgPath, function (err) {
-                  if (err) {
-                    return next(err);
-                  } else {
-                    Category.find()
-                    .sort([["title", "ascending"]])
-                    .exec(function (err, list_categories) {
-                      if (err) {
-                        return next(err);
-                      }
-                      else {
-                        //Successful, so render
-                        res.render("category_list", {
-                          title: "Inventory List",
-                          category_list: list_categories
-                        });
-                      }
-                    }
-                    )
-                  }
-                });
-              }
-            }
-          });
-        }
-        // If items found, warn user
-        else {
-          res.render("category_delete", {
-            title: `Delete ${results.category.title} category`,
-            category: results.category,
-            conflicting_items: results.items,
-          });
-        }
-      }
+      res.render("category_read", {
+        title: `${results.found_category.title} items`,
+        category: results.found_category,
+        items: results.items,
+      });
     }
   );
 };
@@ -435,3 +353,85 @@ exports.category_update_post = function (req, res, next) {
     }
   );
 };
+
+// Deletes a category
+exports.category_delete_get = function (req, res, next) {
+  let id = req.params.category;
+
+  Category.findById(id).exec(function (err, category) {
+    if (err) {
+      return next(err);
+    } else {
+      // Successful, so render.
+      res.render("category_delete", {
+        title: `Delete ${category.title} category`,
+        category: category,
+      });
+    }
+  });
+};
+exports.category_delete_post = function (req, res, next) {
+  let id = req.params.category;
+
+  async.parallel(
+    {
+      category: function (callback) {
+        Category.findById(id).exec(callback);
+      },
+      items: function (callback) {
+        Item.find({ category: id }).exec(callback);
+      },
+    },
+    function (err, results) {
+      if (err) {
+        return next(err);
+      }
+      else {
+        // If no items are found under a given category,delete it
+        if(!results.items.length) {
+          let imgPath = results.category.image_path;
+          Category.findByIdAndDelete(results.category._id).exec(function(err) {
+            if(err) {
+              return next(err);
+            }
+            else {
+              // Delete category image
+              if (fs.existsSync(imgPath)) {
+                fs.unlink(imgPath, function (err) {
+                  if (err) {
+                    return next(err);
+                  } else {
+                    Category.find()
+                    .sort([["title", "ascending"]])
+                    .exec(function (err, list_categories) {
+                      if (err) {
+                        return next(err);
+                      }
+                      else {
+                        //Successful, so render
+                        res.render("category_list", {
+                          title: "Inventory List",
+                          category_list: list_categories
+                        });
+                      }
+                    }
+                    )
+                  }
+                });
+              }
+            }
+          });
+        }
+        // If items found, warn user
+        else {
+          res.render("category_delete", {
+            title: `Delete ${results.category.title} category`,
+            category: results.category,
+            conflicting_items: results.items,
+          });
+        }
+      }
+    }
+  );
+};
+
