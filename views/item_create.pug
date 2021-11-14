@@ -1,45 +1,46 @@
 extends layout
 
 block content
-  div.container
-    div.col-12.category--background(style=`background-image: url(${category.imgUrl}`)
-      div.gradient--overlay.gradient--overlay-yellowpink
-      h5 #[strong #{category.title}]
-      p #{category.description}
-      div.category--navigation-container.d-flex
+  div.container--fluid
+    div.row.header
+      div.col-7.header--left-container
+        h2.header--title #[strong #{category.title}]
+        p.header--description #{category.description}
+      div.col-5.header--right-container
         a(href=`/inventory/category/${category.machine_title}/${category._id}`) Back to Category
         a(href="/inventory") Back to Inventory
-    div.container.px-0
-      div.row.d-flex.mt-2.mx-0.justify-content-between
-        div.col-lg-12.item--container
-          div.col-12.gradient--overlay.gradient--overlay-orangeyellow
-            div.item--content.flex-column
-              h4.text-center Add a new Item to your #[strong #{category.title}] category...
+    div.container--fluid
+      div.row.mt-2
+        div.row.mt-3.form
+          div.col-12.form--container
+            div.col-lg-12.form--container-col__title
+              h3 Add a new Item to your #[strong #{category.title}] category...
+            div.col-12
               form(method='post' action='' enctype="multipart/form-data")
-                div.form-group.row.justify-content-center
-                  div.col-lg-4.mx-3
+                div.form-group.row
+                  div.col-xl-5
                     label(for='title') Title:
                     input#title.form-control(name='title' required value=populate ? populate.title : "" placeholder="Your item title...")
-                  div.col-lg-4.mx-3
+                  div.col-xl-5
                     label(for='description') Description:
                     input#description.form-control(name='description' required value=populate ? populate.description : "" placeholder="Your item description..." maxLength="30")
-                div.form-group.row.justify-content-center
-                  div.col-lg-4.mx-3
+                div.form-group.row
+                  div.col-xl-5
                     label(for='price') Price:
                     input#price.form-control(type='number' step="0.01" name='price' required value=populate ? populate.price : "" placeholder= "3.19" min="0.01" max="10000")
-                  div.col-lg-4.mx-3
+                  div.col-xl-5
                     label(for='stock') Stock:
                     input#stock.form-control(type='number' name='stock' required value=populate ? populate.stock : "" placeholder = "312" min="1" maxLength="10000")
-                  div.form-group.row.justify-content-center
-                    div.col-lg-4.mx-3
-                      label(for='categoryId') Category:
-                      select#categoryId.form-control(name='categoryId' required)
-                        option(value=category._id) #{category.title}
-                    div.col-lg-4.mx-3
-                      label(for='image') Item image:
-                      input#image.form-control(type= 'file' name='image' required accept=".jpg, .jpeg, .png")
-                      if warnings
-                        p.text-info.mt-1.mx-3 #{warnings.img}
-                  div.form-group.row.justify-content-center
-                    div.col-12.d-flex.mt-4.justify-content-center
-                      input.btn.btn-primary(type="submit" value="Create item")
+                div.form-group.row
+                  div.col-xl-5
+                    label(for='categoryId') Category:
+                    select#categoryId.form-control(name='categoryId' required)
+                      option(value=category._id) #{category.title}
+                  div.col-xl-5
+                    label(for='image') Item image:
+                    input#image.form-control(type= 'file' name='image' required accept=".jpg, .jpeg, .png")
+                    if warnings
+                      p.warning #{warnings.img}
+                  div.form-group.row
+                    div.col-12.form--container-col__submit
+                      input.btn.btn-outline-primary(type="submit" value="Create item")
