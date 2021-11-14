@@ -1,4 +1,41 @@
-/* Style forms */
-form label {
-  margin-top: 10px;
+@use  "../abstracts/mixins";
+@use "../abstracts/custom_variables.scss" as cv;
+@use "../base/typography.scss";
+
+.form {
+  @include mixins.normalize--row-light;
+  display: flex;
+  flex-direction: column;
+  .form--container {
+    padding: 40px !important;
+    .form--container-col__title {
+      font-family: typography.$font_biryani;
+      text-align: center;
+    }
+    .form-group.row {
+      justify-content: space-evenly;
+      margin: 5px auto;
+      label {
+        font-family: typography.$font_biryani;
+        font-weight: 500;
+        margin-top: 10px;
+      }
+      p.warning {
+        color: cv.$danger;
+        font-size: cv.$font_size_xs;
+        font-weight: 600;
+        margin-top: 10px;
+      }
+      @media screen and (min-width: cv.$xl) {
+        max-width: 70%;
+      }
+      .form--container-col__submit {
+        margin-top: 40px;
+        width: fit-content;
+        input {
+          font-weight: 600;
+        }
+      }
+    }
+  }
 }
