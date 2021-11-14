@@ -1,41 +1,42 @@
 extends layout
 
 block content
-  div.container
-    div.col-12.category--background(style=`background-image: url(${category.imgUrl}`)
-      div.gradient--overlay.gradient--overlay-yellowpink
-      h5 #[strong #{category.title}]
-      p #{category.description}
-      div.category--navigation-container.d-flex
+  div.container--fluid
+    div.row.header
+      div.col-7.header--left-container
+        h2.header--title #[strong Inventory Management App]
+      div.col-5.header--right-container
         if items.length > 0
           a(href=`${category._id}/new`) Add new Item
         else 
           a(href=`/inventory/category/${category.machine_title}/${category._id}/delete`) Delete Category
         a(href="/inventory") Back to Inventory
   if items.length > 0
-      div.container
-        div.row.d-flex.mt-2.mx-0.justify-content-between
+      div.container--fluid
+        div.row.mt-2.mx-0
+          -var normal_card = true
           each item in items
-              div.col-lg-6.item--container(style=`background-image: url(${item.imgUrl}` alt=item.title)
-                div.col-12.gradient--overlay.gradient--overlay-orangeyellow
-                  div.item--content
-                    div
-                      p #[strong #{item.title}]
-                      if item.description 
-                        p #{item.description}
+            div.col-xl-6.mb-1.mt-1
+              div.col-12(class= normal_card ? 'content--card' : 'content--card-reverse')
+                - var normal_card = !normal_card
+                div.col-7.content--card-left
+                  div
+                    h3.content--card-title #[strong #{item.title}]
+                    if item.description 
+                      p.content--card-description #{item.description}
                       p  #[strong Price:] #{item.price.toFixed(2)}€ | #[strong Stock:] #{item.stock}
-                    div.item--options 
-                      a(href=`${category._id}/${item._id}/edit`) 
-                        button.btn--edit.btn.btn-sm.btn-secondary Edit
-                      a(href=`${category._id}/${item._id}/delete`) 
-                        button.btn--edit.btn.btn-sm.btn-danger Delete
+                  div.content--card-options 
+                    a(href=`${category._id}/${item._id}/edit`) 
+                      button.btn--edit.btn.btn-sm.btn-outline-secondary Edit
+                    a(href=`${category._id}/${item._id}/delete`) 
+                      button.btn--edit.btn.btn-sm.btn-outline-danger Delete
+                div.col-5.content--card-right(style=`background-image: url(${item.imgUrl}` alt=category.title)
   else
-    div.container
-      div.row.d-flex.mt-2.mx-0.justify-content-between
-        div.col-lg-12.item--container
-          div.col-12.gradient--overlay.gradient--overlay-orangeyellow.align-middle.align-self-center
-            div.item--content.d-flex.justify-content-center
-              div.justify-content-center
-                h5.mb-3 #[strong No items to show]
-                a.text-decoration-none(href=`${category._id}/new`)
-                  button.btn.btn-light.text.d-flex.mx-auto Add new item
+    div.container--fluid
+      div.row.mt-3.content--empty
+        div.col-12.content--empty-content
+          div.col-lg-12.content--empty-title
+            h5.mb-3 #[strong No items to show]
+          div.col-lg-12.content--empty-cta
+            a.text-decoration-none(href=`${category._id}/new`)
+              button.btn.btn-sm.btn-outline-primary Add new item
