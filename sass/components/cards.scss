@@ -27,6 +27,7 @@
       a {
         margin: 0 5px;
         button {
+          font-size: cv.$font_size_s;
           @media screen and (max-width: cv.$md - 1) {
             font-size: cv.$font_size_sm;
           }
@@ -40,7 +41,7 @@
   }
   .content--card-right {
     background-size: cover;
-    min-height: 150px;
+    min-height: 250px;
   }
 }
 
