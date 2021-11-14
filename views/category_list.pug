@@ -9,13 +9,13 @@ block content
         a(href=`inventory/category/new`) Add new category
   if category_list.length > 0
       div.container--fluid
-        div.row.d-flex.mt-2.mx-0
+        div.row.mt-2.mx-0
           -var normal_card = true
           each category in category_list
-            div.col-xl-6.mb-1.mt-1.d-flex
+            div.col-xl-6.mb-1.mt-1
               div.col-12(class= normal_card ? 'content--card' : 'content--card-reverse')
                 - var normal_card = !normal_card
-                div.col-7.content--card-left.category--content
+                div.col-7.content--card-left
                   div
                     h3.content--card-title #[strong #{category.title}]
                     if category.description 
@@ -29,12 +29,11 @@ block content
                       button.btn--edit.btn.btn-sm.btn-outline-danger Delete
                 div.col-5.content--card-right(style=`background-image: url(${category.imgUrl}` alt=category.title)
   else
-      div.container--fluid
-        div.row.d-flex.mt-2.mx-0.justify-content-between
-          div.col-xl-12.category--container
-            div.col-12.gradient--overlay.gradient--overlay-orangeyellow.align-middle.align-self-center
-              div.category--content.d-flex.justify-content-center
-                div.justify-content-center
-                  h5.mb-3 #[strong No items to show]
-                  a.text-decoration-none(href=category.url)
-                    button.btn.btn-light.text.d-flex.mx-auto Add new item
+    div.container--fluid
+      div.row.mt-3.content--empty
+        div.col-12.content--empty-content
+          div.col-lg-12.content--empty-title
+            h5.mb-3 #[strong No categories to show]
+          div.col-lg-12.content--empty-cta                  
+            a.text-decoration-none(href='inventory/category/new')
+              button.btn.btn-sm.btn-outline-primary Add new category
