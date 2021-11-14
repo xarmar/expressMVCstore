@@ -18,8 +18,12 @@
     .content--card-options {
       display: flex;
       justify-content: flex-end;
-      a, form {
+      a {
         margin: 0 5px;
+        button {
+          color: cv.$light;
+          font-weight: 600;
+        }
       }
     }
   }
