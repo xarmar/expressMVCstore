@@ -1,4 +1,11 @@
-@mixin normalize-row {
+// Normalizes a row to be full with
+@mixin normalize--row {
   margin-left: 0;
   padding: 0 40px;
+}
+
+@mixin normalize--row-light {
+  @include normalize--row;
+  background-color: rgb(255 209 102 / 1%);
+  box-shadow: 0px 0px 5px 1px rgb(0 0 0 / 25%);
 }
