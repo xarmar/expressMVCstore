@@ -1,3 +1,4 @@
+@use "../abstracts/custom_variables" as cv;
 @import url('https://fonts.googleapis.com/css2?family=Biryani:wght@300;400&family=Kanit:ital,wght@0,600;0,700;1,600;1,700&family=Prompt:ital,wght@0,100;0,200;1,100;1,200&display=swap');
 
 $font_kanit: 'Kanit';
@@ -5,29 +6,33 @@ $font_biryani: 'Biryani';
 $font_prompt: 'Prompt';
 
 h1 {
-  font-size: 50px;
+  font-size: cv.$font_size_xl;
 }
 
 h2 {
-  font-size: 42px;
+  font-size: cv.$font_size_lg;
 }
 
 h3 {
-  font-size: 36px;
+  font-size: cv.$font_size_ml;
 }
 
 h4 {
-  font-size: 30px;
+  font-size: cv.$font_size_m;
 }
 
 h5 {
-  font-size: 26px;
+  font-size: cv.$font_size_sm;
 }
 
 h6 {
-  font-size: 22px;
+  font-size: cv.$font_size_s
 }
 
 p {
-  font-size: 16px;
+  font-size: cv.$font_size_xs;
+
 }
+
+
+
