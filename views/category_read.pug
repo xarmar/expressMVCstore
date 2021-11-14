@@ -4,7 +4,7 @@ block content
   div.container--fluid
     div.row.header
       div.col-7.header--left-container
-        h2.header--title #[strong Inventory Management App]
+        h2.header--title #[strong #{category.title}]
       div.col-5.header--right-container
         if items.length > 0
           a(href=`${category._id}/new`) Add new Item
@@ -13,7 +13,7 @@ block content
         a(href="/inventory") Back to Inventory
   if items.length > 0
       div.container--fluid
-        div.row.mt-2.mx-0
+        div.row.mt-2
           -var normal_card = true
           each item in items
             div.col-xl-6.mb-1.mt-1
@@ -39,4 +39,4 @@ block content
             h5.mb-3 #[strong No items to show]
           div.col-lg-12.content--empty-cta
             a.text-decoration-none(href=`${category._id}/new`)
-              button.btn.btn-sm.btn-outline-primary Add new item
+              button.btn.btn-outline-primary Add new item
