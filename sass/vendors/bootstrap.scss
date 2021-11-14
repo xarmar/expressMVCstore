@@ -1,1 +1,14 @@
+@use "../abstracts/custom_variables.scss" as cv;
+
+// Override whatever Bootstrap variable you want right here
+
+$primary:       cv.$primary !default;
+$secondary:     cv.$secondary !default;
+$success:       cv.$success !default;
+$info:          cv.$info !default;
+$warning:       cv.$warning !default;
+$danger:        cv.$danger !default;
+$light:         cv.$light !default;
+$dark:          cv.$dark !default;
+
 @import "../../node_modules/bootstrap/scss/bootstrap.scss";
