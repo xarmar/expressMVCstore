@@ -1,6 +1,6 @@
 @use  "../abstracts/mixins";
-@use "../abstracts/custom_variables.scss" as cv;
-@use "../base/typography.scss";
+@use "../abstracts/custom_variables" as cv;
+@use "../base/typography";
 
 .form {
   @include mixins.normalize--row-light;
