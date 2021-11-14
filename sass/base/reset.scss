@@ -1,11 +1,8 @@
 @use "typography";
 
+// Define standard font
 body {
   font-family: typography.$font_prompt;
-}
-
-.row>* {
-  padding: 0 !important;
 }
 
 // Change scrollbar appearance
@@ -20,4 +17,19 @@ body {
 }
 ::-webkit-scrollbar-thumb:hover {
   background: #555; 
+}
+
+// Make children of rows always full width
+.row>* {
+  padding: 0 !important;
+}
+
+// Remove hyperlink default colors
+a {
+  color: black;
+  text-decoration: none;
+  &:hover {
+    color:black;
+    text-decoration: underline;
+  }
 }
