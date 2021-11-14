@@ -2,10 +2,10 @@ extends layout
 
 block content
   div.container--fluid
-    div.col-12.category--background
-      div.gradient--overlay.gradient--overlay-yellowpink
-      h5 #[strong Your Inventory]
-      div.category--navigation-container.d-flex
+    div.row.header
+      div.col-7.header--left-container
+        h2.header--title #[strong Inventory Management App]
+      div.col-5.header--right-container
         a(href=`inventory/category/new`) Add new category
   if category_list.length > 0
       div.container--fluid
@@ -22,11 +22,11 @@ block content
                       p.content--card-description #{category.description}
                   div.content--card-options
                     a(href=category.url) 
-                      button.btn--edit.btn.btn-sm.btn-success View
+                      button.btn--edit.btn.btn-sm.btn-outline-success View
                     a(href=`${category.url}/edit`) 
-                      button.btn--edit.btn.btn-sm.btn-secondary Edit
+                      button.btn--edit.btn.btn-sm.btn-outline-secondary Edit
                     a(href=`${category.url}/delete`) 
-                      button.btn--edit.btn.btn-sm.btn-danger Delete
+                      button.btn--edit.btn.btn-sm.btn-outline-danger Delete
                 div.col-5.content--card-right(style=`background-image: url(${category.imgUrl}` alt=category.title)
   else
       div.container--fluid
