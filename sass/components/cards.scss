@@ -2,26 +2,26 @@
 @use "../abstracts/custom_variables" as cv;
 
 // The vanilla default card
-.content--card {
+.card {
   box-shadow: 0px 0px 5px 1px rgb(0 0 0 / 20%);
   display: flex;
   flex-direction: row;
   height: 100%;
   overflow-wrap: break-word;
-  .content--card-left {
+  .card--content {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
     padding: 15px 40px;
-    .content--card-title {
+    .card__title {
       font-family: typography.$font_biryani;
     }
-    .content--card-description {
+    .card__description {
       @media screen and (max-width: cv.$md - 1) {
         font-size: cv.$font_size_sm;
       }
     }
-    .content--card-options {
+    .card__buttons {
       display: flex;
       justify-content: flex-end;
       a {
@@ -39,15 +39,14 @@
       }
     }
   }
-  .content--card-right {
+  .card__image {
     background-size: cover;
     min-height: 250px;
   }
 }
 
 // Makes the card flip sides when the width is between 768px and 1200px
-.content--card-reverse { 
-  @extend .content--card;
+.card--display-reverse { 
   @media screen and (min-width: cv.$md) and (max-width: cv.$xl - 1) {
     flex-direction: row-reverse;
     .col-5 {
@@ -60,7 +59,7 @@
 }
 
 // When width is under 768px display as column
-.content--card, .content--card-reverse {
+.card {
   @media screen and (max-width: cv.$md - 1) {
     flex-direction: column-reverse;
     &>div {

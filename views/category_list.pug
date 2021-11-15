@@ -3,9 +3,9 @@ extends layout
 block content
   div.container--fluid
     div.row.header
-      div.col-7.header--left-container
+      div.col-xl-6.d-none.d-xl-block.header--left-container
         h2.header--title #[strong Inventory Management App]
-      div.col-5.header--right-container
+      div.col-xl-6.header--right-container
         a(href=`inventory/category/new`) Add new category
   if category_list.length > 0
       div.container--fluid
@@ -13,21 +13,21 @@ block content
           -var normal_card = true
           each category in category_list
             div.col-xl-6.mb-1.mt-1
-              div.col-12(class= normal_card ? 'content--card' : 'content--card-reverse')
+              div.col-12(class= normal_card ? 'card' : 'card card--display-reverse')
                 - var normal_card = !normal_card
-                div.col-7.content--card-left
+                div.col-7.card--content
                   div
-                    h3.content--card-title #[strong #{category.title}]
+                    h3.card__title #[strong #{category.title}]
                     if category.description 
-                      p.content--card-description #{category.description}
-                  div.content--card-options
+                      p.card__description #{category.description}
+                  div.card__buttons
                     a(href=category.url) 
                       button.btn--edit.btn.btn-sm.btn-outline-success View
                     a(href=`${category.url}/edit`) 
                       button.btn--edit.btn.btn-sm.btn-outline-secondary Edit
                     a(href=`${category.url}/delete`) 
                       button.btn--edit.btn.btn-sm.btn-outline-danger Delete
-                div.col-5.content--card-right(style=`background-image: url(${category.imgUrl}` alt=category.title)
+                div.col-5.card__image(style=`background-image: url(${category.imgUrl}` alt=category.title)
   else
     div.container--fluid
       div.row.mt-3.content--empty
