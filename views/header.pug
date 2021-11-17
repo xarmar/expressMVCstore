@@ -1,0 +1,20 @@
+extends layout
+
+block content
+  nav#navbar
+    div.navbar--burger(aria-controls= "primary-navigation" aria-expanded="false") 
+      span.navbar--burger__span
+      span.navbar--burger__span
+      span.navbar--burger__span
+    div#navbar-menu.navbar--background(data-visible="false")
+      ul.navbar--menu
+        li.navbar--menu__item
+          h6.navbar--menu__info Inventory
+        li.navbar--menu__item
+          a.navbar--menu__link(href="#") Add new category
+        li.navbar--menu__item 
+          a.navbar--menu__link(href="#") Work in progress
+        li.navbar--menu__item 
+          a.navbar--menu__link(href="#") Example
+
+  block test

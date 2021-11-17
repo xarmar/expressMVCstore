@@ -40,3 +40,72 @@
 }
 
 
+// Navbar mobile first approach | WIP - TODO
+#navbar {
+  position: absolute;
+  top: 0;
+
+  .navbar--burger {
+    display: flex;
+    flex-direction: column;
+    height: 25px;
+    justify-content: space-between;
+    right: 45px;
+    position: fixed;
+    top: 35px;
+    width: 25px;
+    z-index: 9999;
+    .navbar--burger__span {
+      background-color: black;
+      display: block;
+      height: 5px;
+      width: 100%;
+    }
+  }
+  
+  .navbar--background {
+    background-color: hsl(42 100% 75% / 0.85);
+    @supports (backdrop-filter: blur(1rem)) {
+      background-color: hsl(42 100% 75% / 0.65);
+      backdrop-filter: blur(1rem);
+    };
+    top: 0;
+    transition: 350ms ease-out;
+    transform: translateX(100%);
+    right: 0;
+    position: fixed;
+    max-width: 50vw;
+    height: 105vh;
+    z-index: 500;
+
+    &[data-visible="true"] {
+      transform: translateX(0%);
+    }
+  
+    .navbar--menu {
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      right:20px;
+      top: 100px;
+      z-index: 1000;
+
+      
+      .navbar--menu__item {
+        list-style-type: none;
+        padding: 14px 4px;
+        text-align: right;
+        
+        .navbar--menu__info {
+          font-weight: 600;
+          text-decoration: underline;
+        }
+        .navbar--menu__link {
+          font-family: typography.$font_biryani;
+          font-size: cv.$font_size_xs;
+        }
+      }
+    }
+  }
+
+}
