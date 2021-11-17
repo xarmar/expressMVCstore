@@ -40,10 +40,15 @@
 }
 
 
-// Navbar mobile first approach | WIP - TODO
+// Navbar mobile first approach
 #navbar {
+  max-width: 0;
   position: absolute;
   top: 0;
+  @media screen and (min-width: cv.$md) {
+    max-width: unset;
+    position: unset;
+  }
 
   .navbar--burger {
     display: flex;
@@ -55,11 +60,18 @@
     top: 35px;
     width: 25px;
     z-index: 9999;
+    &:hover {
+      cursor: pointer;
+    }
     .navbar--burger__span {
       background-color: black;
       display: block;
       height: 5px;
+      pointer-events: none;
       width: 100%;
+    }
+    @media screen and (min-width: cv.$md) {
+      display: none;
     }
   }
   
@@ -69,17 +81,30 @@
       background-color: hsl(42 100% 75% / 0.65);
       backdrop-filter: blur(1rem);
     };
+    height: 105vh;
+    max-width: fit-content;
+    position: fixed;
+    right: 0;
     top: 0;
     transition: 350ms ease-out;
     transform: translateX(100%);
-    right: 0;
-    position: fixed;
-    max-width: 50vw;
-    height: 105vh;
     z-index: 500;
 
     &[data-visible="true"] {
       transform: translateX(0%);
+    }
+
+    @media screen and (max-width: cv.$sm) {
+      max-width: 50vw;
+    }
+
+    @media screen and (min-width: cv.$md) {
+      background-color: rgba(255, 209, 102, 0.75);
+      height: inherit;
+      max-width: inherit;
+      position: inherit;
+      transform: none;
+      transition: none;
     }
   
     .navbar--menu {
@@ -90,19 +115,45 @@
       top: 100px;
       z-index: 1000;
 
+      @media screen and (min-width: cv.$md) {
+        align-items: center;
+        flex-direction: row;
+        justify-content: space-between;
+        margin-bottom: 0;
+        margin-right: 35px;
+        position: inherit;
+        .navbar--menu__navigation {
+          display: flex;
+          flex-direction: row;
+        }
+      }
       
       .navbar--menu__item {
         list-style-type: none;
         padding: 14px 4px;
         text-align: right;
+        @media screen and (min-width: cv.$md) {
+          margin: 0 5px;
+        }
         
         .navbar--menu__info {
           font-weight: 600;
           text-decoration: underline;
+          @media screen and (min-width: cv.$md) {
+            font-family: typography.$font_kanit;
+            font-size: cv.$font_size_ml;
+            text-decoration: none;
+          }
+          @media screen and (min-width: cv.$lg) {
+            font-size: cv.$font_size_xl;
+          }
         }
         .navbar--menu__link {
           font-family: typography.$font_biryani;
           font-size: cv.$font_size_xs;
+          @media screen and (min-width: cv.$lg) {
+          font-size: cv.$font_size_s;
+          }
         }
       }
     }
