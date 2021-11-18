@@ -15,6 +15,7 @@
     padding: 15px 40px;
     .card__title {
       font-family: typography.$font_biryani;
+      margin-left: -4px;
     }
     .card__description {
       @media screen and (max-width: cv.$md - 1) {
