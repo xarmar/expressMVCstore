@@ -6,6 +6,12 @@
   @include mixins.normalize--row-light;
   display: flex;
   flex-direction: column;
+  justify-content: center;
+  height: 100vh;
+  @media screen and (min-width: cv.$md) {
+    height: 85vh;
+    justify-content: unset;
+  }
   .form--container {
     padding: 40px !important;
     .form--column__title {
