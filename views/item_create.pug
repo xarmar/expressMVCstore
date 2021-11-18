@@ -1,19 +1,27 @@
 extends layout
 
 block content
+  nav#navbar.row
+    div.navbar--burger(aria-controls= "primary-navigation" aria-expanded="false") 
+      span.navbar--burger__span
+      span.navbar--burger__span
+      span.navbar--burger__span
+    div#navbar-menu.navbar--background(data-visible="false")
+      ul.navbar--menu
+        div
+          li.navbar--menu__item
+            h6.navbar--menu__info #{category.title}
+        div.navbar--menu__navigation
+          li.navbar--menu__item
+            a.navbar--menu__link(href=`/inventory/category/${category.machine_title}/${category._id}`) Back to Category
+          li.navbar--menu__item
+            a.navbar--menu__link(href=`/inventory`)  Back to Inventory
+  script(src="/javascripts/header.js" type="text/javascript")
   div.container--fluid
-    div.row.header
-      div.col-7.header--left-container
-        h2.header--title #[strong #{category.title}]
-        p.header--description #{category.description}
-      div.col-5.header--right-container
-        a(href=`/inventory/category/${category.machine_title}/${category._id}`) Back to Category
-        a(href="/inventory") Back to Inventory
-    div.container--fluid
       div.row.mt-2
-        div.row.mt-3.form
+        div.row.form
           div.col-12.form--container
-            div.col-lg-12.form--container-col__title
+            div.col-lg-12.form--column__title
               h3 Add a new Item to your #[strong #{category.title}] category...
             div.col-12
               form(method='post' action='' enctype="multipart/form-data")
@@ -40,7 +48,7 @@ block content
                     label(for='image') Item image:
                     input#image.form-control(type= 'file' name='image' required accept=".jpg, .jpeg, .png")
                     if warnings
-                      p.warning #{warnings.img}
+                      p.form--feedback-warning #{warnings.img}
                   div.form-group.row
-                    div.col-12.form--container-col__submit
+                    div.col-12.form--column__submit
                       input.btn.btn-outline-primary(type="submit" value="Create item")

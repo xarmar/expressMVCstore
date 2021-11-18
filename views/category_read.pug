@@ -1,36 +1,46 @@
 extends layout
 
 block content
-  div.container--fluid
-    div.row.header
-      div.col-7.header--left-container
-        h2.header--title #[strong #{category.title}]
-      div.col-5.header--right-container
-        if items.length > 0
-          a(href=`${category._id}/new`) Add new Item
-        else 
-          a(href=`/inventory/category/${category.machine_title}/${category._id}/delete`) Delete Category
-        a(href="/inventory") Back to Inventory
+  nav#navbar.row
+    div.navbar--burger(aria-controls= "primary-navigation" aria-expanded="false") 
+      span.navbar--burger__span
+      span.navbar--burger__span
+      span.navbar--burger__span
+    div#navbar-menu.navbar--background(data-visible="false")
+      ul.navbar--menu
+        div
+          li.navbar--menu__item
+            h6.navbar--menu__info #{category.title}
+        div.navbar--menu__navigation
+          if items.length > 0
+            li.navbar--menu__item
+              a.navbar--menu__link(href=`${category._id}/new`) Add new Item
+          else 
+            li.navbar--menu__item
+              a.navbar--menu__link(href=`/inventory/category/${category.machine_title}/${category._id}/delete`) Delete Category
+          li.navbar--menu__item 
+            a.navbar--menu__link(href="/inventory") Back to Inventory
+  script(src="/javascripts/header.js" type="text/javascript")
   if items.length > 0
       div.container--fluid
         div.row.mt-2
           -var normal_card = true
           each item in items
             div.col-xl-6.mb-1.mt-1
-              div.col-12(class= normal_card ? 'content--card' : 'content--card-reverse')
+              div.col-12(class= normal_card ? 'card' : 'card card--display-reverse')
                 - var normal_card = !normal_card
-                div.col-7.content--card-left
+                div.col-7.card--content
                   div
-                    h3.content--card-title #[strong #{item.title}]
+                    h3.card__title #[strong #{item.title}]
                     if item.description 
-                      p.content--card-description #{item.description}
+                      p.card__description #{item.description}
                       p  #[strong Price:] #{item.price.toFixed(2)}€ | #[strong Stock:] #{item.stock}
-                  div.content--card-options 
+                  div.card__buttons 
                     a(href=`${category._id}/${item._id}/edit`) 
                       button.btn--edit.btn.btn-sm.btn-outline-secondary Edit
                     a(href=`${category._id}/${item._id}/delete`) 
                       button.btn--edit.btn.btn-sm.btn-outline-danger Delete
-                div.col-5.content--card-right(style=`background-image: url(${item.imgUrl}` alt=category.title)
+                div.col-5.card__image(style=`background-image: url(${item.imgUrl}` alt=category.title)
   else
     div.container--fluid
       div.row.mt-3.content--empty
