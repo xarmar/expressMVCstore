@@ -8,7 +8,7 @@
   flex-direction: column;
   .form--container {
     padding: 40px !important;
-    .form--container-col__title {
+    .form--column__title {
       font-family: typography.$font_biryani;
       text-align: center;
     }
@@ -20,7 +20,7 @@
         font-weight: 500;
         margin-top: 10px;
       }
-      p.warning {
+      .form--feedback-warning {
         color: cv.$danger;
         font-size: cv.$font_size_xs;
         font-weight: 600;
@@ -29,7 +29,7 @@
       @media screen and (min-width: cv.$xl) {
         max-width: 70%;
       }
-      .form--container-col__submit {
+      .form--column__submit {
         margin-top: 40px;
         width: fit-content;
         input {
