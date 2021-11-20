@@ -95,6 +95,9 @@
         text-align: right;
         @media screen and (min-width: cv.$md) {
           margin: 0 5px;
+          &:first-child {
+            padding-left: 0;
+          }
         }
         
         .navbar--menu__info {
