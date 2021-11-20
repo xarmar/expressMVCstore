@@ -1,5 +1,4 @@
 const async = require("async");
-const { body, validationResult } = require("express-validator");
 const Category = require("../models/category");
 const fileIsValidImg = require("../helperFunctions/fileIsValidImg");
 const Item = require("../models/item");
@@ -123,7 +122,7 @@ exports.item_update_get = function (req, res, next) {
       category: function (callback) {
         Category.findById(category_id).exec(callback);
       },
-      // Get category object
+      // Get item object
       item: function (callback) {
         Item.findById(item_id).exec(callback);
       },
