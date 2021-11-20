@@ -1,8 +1,8 @@
 const express = require("express");
-const router = express.Router();
-const validators = require("../validators/expressValidators");
 const multer  = require('multer');
+const router = express.Router();
 const upload = multer({ dest: 'public/images' });
+const validators = require("../validators/expressValidators");
 
 // Require controller modules.
 const category_controller = require("../controllers/categoryController");
