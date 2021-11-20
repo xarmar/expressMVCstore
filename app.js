@@ -11,9 +11,11 @@ const cookieParser = require('cookie-parser');
 const compression = require('compression');
 const createError = require('http-errors');
 const express = require('express');
+const favicon = require('serve-favicon');
 const helmet = require('helmet');
 const logger = require('morgan');
 const path = require('path');
+
 
 const indexRouter = require('./routes/index');
 const inventoryRouter = require('./routes/inventory');
@@ -22,6 +24,7 @@ const app = express();
 
 app.use(compression()); 
 app.use(helmet());
+app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
