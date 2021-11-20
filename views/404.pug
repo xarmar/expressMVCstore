@@ -1,0 +1,25 @@
+extends layout
+
+block content
+  nav#navbar.row
+    div.navbar--burger(aria-controls= "primary-navigation" aria-expanded="false") 
+      span.navbar--burger__span
+      span.navbar--burger__span
+      span.navbar--burger__span
+    div#navbar-menu.navbar--background(data-visible="false")
+      ul.navbar--menu
+        div
+          li.navbar--menu__item
+            h6.navbar--menu__info Inventory
+        div.navbar--menu__navigation
+          li.navbar--menu__item
+            a.navbar--menu__link(href=`/inventory`)  Back to Inventory
+  script(src="/javascripts/header.js" type="text/javascript")
+  div.container--fluid
+    div.row.mt-2
+      div.row.form
+        div.col-12.form--container
+          div.col-lg-12.form--column__title
+            h3 #[strong 404] Page not found... 
+            a.text-center(href=`/inventory`) 
+              button.btn.btn-outline-primary.mt-4 Back to Inventory
