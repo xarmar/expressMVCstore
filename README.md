@@ -3,8 +3,8 @@
 ## About This App:
 - An inventory management app built with the **MVC (Model, View, Controller) design pattern**.
 - Back-end is handled by **NodeJS** with the **Express** framework.
-- **MongoDB** is being used as a database and **moongoose** is used for object modeling.
-- **Pug** is the template engine being used to render the content.
+- **MongoDB** is the database of choice with **moongoose** being used for object modeling.
+- As a template engine, **Pug** is used to render the content.
 
 ## Technology Stack Used in This Project:
 <br>
@@ -27,6 +27,6 @@
 - How to use the **MVC pattern** to build a website that renders content from a database.
 
 ## Could be Improved:
-- I chose to use the [async module](https://developer.mozilla.org/en-US/docs/Learn/Server-side/Express_Nodejs/Displaying_data/flow_control_using_async) from a previous [MDN tutorial](https://developer.mozilla.org/en-US/docs/Learn/Server-side/Express_Nodejs) to handle asynchronous code. This was a mistake - the code ended up more confusing because of **callback hell**. I plan on re-writing this project in the future with **promises**.
+- I chose to use the [async module](https://developer.mozilla.org/en-US/docs/Learn/Server-side/Express_Nodejs/Displaying_data/flow_control_using_async) from a previous [MDN tutorial](https://developer.mozilla.org/en-US/docs/Learn/Server-side/Express_Nodejs) to handle asynchronous code. This was a mistake - the code ended up looking like **callback hell**. I plan on re-writing this project in the future with **promises**.
 
 
