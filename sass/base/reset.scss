@@ -10,17 +10,17 @@ body {
   width: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: #f1f1f1; 
+  background: #f1f1f1;
 }
 ::-webkit-scrollbar-thumb {
-  background: #888; 
+  background: #888;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #555; 
+  background: #555;
 }
 
 // Make children of rows always full width
-.row>* {
+.row > * {
   padding: 0 !important;
 }
 
@@ -29,7 +29,7 @@ a {
   color: black;
   text-decoration: none;
   &:hover {
-    color:black;
+    color: black;
     text-decoration: underline;
   }
 }
