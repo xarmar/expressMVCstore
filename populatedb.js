@@ -84,7 +84,7 @@ function createCategories(cb) {
       function (callback) {
         CategoryCreate(
           "Fruits",
-          "All types of fruit from all over the world. Which ones to choose, that is the hard question!",
+          "Fruits from all over the world. Fresh, sweet and very healthy.",
           "/images/fruits_category.jpg",
           callback
         );
@@ -92,7 +92,7 @@ function createCategories(cb) {
       function (callback) {
         CategoryCreate(
           "Meat",
-          "Bought directly from local farmers, our products help support small farms around our state.",
+          "Bought directly from local farmers, our products support small farms around our state.",
           "/images/meat_category.jpg",
           callback
         );
@@ -100,7 +100,7 @@ function createCategories(cb) {
       function (callback) {
         CategoryCreate(
           "Fish",
-          "Bought directly from local fishermen, buying our fish supports the local families in our community.",
+          "Bought directly from local fishermen, we help local families thrive.",
           "/images/fish_category.jpg",
           callback
         );
@@ -108,7 +108,7 @@ function createCategories(cb) {
       function (callback) {
         CategoryCreate(
           "Vegetables",
-          "Get all the vitamins and minerals you need with our top quality BIO veggies.",
+          "Full of vitamins, minerals and of great quality. Bought directly from local farmers.",
           "/images/vegetables_category.jpg",
           callback
         );
@@ -116,7 +116,7 @@ function createCategories(cb) {
       function (callback) {
         CategoryCreate(
           "Bakery",
-          "Delicious cakes and really tasty bread. Our bakers make everything with love just for you.",
+          "Delicious cakes and tasty bread. We bake our products with love.",
           "/images/bakery_category.jpg",
           callback
         );
@@ -124,7 +124,7 @@ function createCategories(cb) {
       function (callback) {
         CategoryCreate(
           "Drinks",
-          "Feeling thirsty? We have a big variety of drinks available - you will surely find your favorite.",
+          "A big variety of drinks available - sodas, fruit juice, water, iced tea.. everything",
           "/images/drinks_category.jpg",
           callback
         );
@@ -132,7 +132,7 @@ function createCategories(cb) {
       function (callback) {
         CategoryCreate(
           "Dairy",
-          "Milk, cheese and yogurt. Is there anything better? We don't think so.",
+          "Milk, cheese, yogurts and many other delicious dairy products.",
           "/images/dairy_category.jpg",
           callback
         );
@@ -140,7 +140,7 @@ function createCategories(cb) {
       function (callback) {
         CategoryCreate(
           "Health and Beauty",
-          "Try our amazing products and experience a real improvement in well-being.",
+          "Our health and beauty products help everyone feel great about themselves.",
           "/images/healthAndBeauty_category.jpg",
           callback
         );
