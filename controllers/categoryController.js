@@ -89,8 +89,7 @@ exports.category_list_get = function (req, res, next) {
     .exec(function (err, list_categories) {
       if (err) {
         return next(err);
-      }
-      else {
+      } else {
         //Successful, so render
         res.render("category_list", {
           title: "Inventory List",
@@ -99,7 +98,7 @@ exports.category_list_get = function (req, res, next) {
       }
     });
 };
-// Displays a category and all it's items 
+// Displays a category and all it's items
 exports.category_get = function (req, res, next) {
   let id = req.params.category;
   async.parallel(
@@ -165,8 +164,9 @@ exports.category_update_post = function (req, res, next) {
         let originalImagePath = results.original_category.image_path;
         let newCategory_machine_title = title.toLowerCase().split(" ").join("");
         let newCategory_imgUrl = `/images/${newCategory_machine_title}_category.jpg`;
-        let original_category_machine_title = results.original_category.machine_title;
-        
+        let original_category_machine_title =
+          results.original_category.machine_title;
+
         // Prepare new category that will replace original_category
         let updated_category = {
           title: title,
@@ -178,90 +178,107 @@ exports.category_update_post = function (req, res, next) {
           // If user uploads a valid image
           if (fileIsValidImg(image.mimetype)) {
             // Update Category in database
-            Category.findByIdAndUpdate(category_id, updated_category, function (err) {
-              if (err) {
-                return next(err);
-              } else {
-                // Delete old image
-                if (fs.existsSync(originalImagePath)) {
-                  fs.unlink(originalImagePath, function (err) {
-                    if (err) {
-                      return next(err);
-                    }
-                  });
-                }
-                // Move uploaded image from 'temp' path to permanent public/images path
-                fs.rename(
-                  image.path,
-                  'public' + newCategory_imgUrl,
-                  function (err) {
-                    if (err) {
-                      return next(err);
-                    } 
-                    else {
-                      // Update all items imgUrls in Db
-                      let promiseUpdateDb = [];
-                      results.items.forEach(item => {
-                        let p = new Promise((resolve, reject) => {
-                          let previousUrl = item.imgUrl;
-                          let newImgUrl = getNewImagePath(original_category_machine_title, newCategory_machine_title, previousUrl);
-                          let updateImgPath = {
-                            imgUrl: newImgUrl
-                          }
-                          Item.findByIdAndUpdate(item._id, updateImgPath, function(err) {
-                            if(err) {
-                              reject(err);
-                            }
-                            else {
-                              resolve([previousUrl, newImgUrl]);
-                            }
-                          });
-                        })
-                        promiseUpdateDb.push(p);
-                      });
-
-                      // Rename item images to match new category
-                      let promiseRenameImages = [];
-                      Promise.all(promiseUpdateDb).then(imgUrls => {
-                        imgUrls.forEach(urlPair => {
+            Category.findByIdAndUpdate(
+              category_id,
+              updated_category,
+              function (err) {
+                if (err) {
+                  return next(err);
+                } else {
+                  // Delete old image
+                  if (fs.existsSync(originalImagePath)) {
+                    fs.unlink(originalImagePath, function (err) {
+                      if (err) {
+                        return next(err);
+                      }
+                    });
+                  }
+                  // Move uploaded image from 'temp' path to permanent public/images path
+                  fs.rename(
+                    image.path,
+                    "public" + newCategory_imgUrl,
+                    function (err) {
+                      if (err) {
+                        return next(err);
+                      } else {
+                        // Update all items imgUrls in Db
+                        let promiseUpdateDb = [];
+                        results.items.forEach((item) => {
                           let p = new Promise((resolve, reject) => {
-                            let previousImgPath = 'public' + urlPair[0];
-                            let newImgPath = 'public' + urlPair[1];
-                            fs.rename(previousImgPath, newImgPath, function(err) {
-                              if(err) {
-                                reject(err);
+                            let previousUrl = item.imgUrl;
+                            let newImgUrl = getNewImagePath(
+                              original_category_machine_title,
+                              newCategory_machine_title,
+                              previousUrl
+                            );
+                            let updateImgPath = {
+                              imgUrl: newImgUrl,
+                            };
+                            Item.findByIdAndUpdate(
+                              item._id,
+                              updateImgPath,
+                              function (err) {
+                                if (err) {
+                                  reject(err);
+                                } else {
+                                  resolve([previousUrl, newImgUrl]);
+                                }
                               }
-                              else {
-                                resolve();
-                              }
+                            );
+                          });
+                          promiseUpdateDb.push(p);
+                        });
+
+                        // Rename item images to match new category
+                        let promiseRenameImages = [];
+                        Promise.all(promiseUpdateDb)
+                          .then((imgUrls) => {
+                            imgUrls.forEach((urlPair) => {
+                              let p = new Promise((resolve, reject) => {
+                                let previousImgPath = "public" + urlPair[0];
+                                let newImgPath = "public" + urlPair[1];
+                                fs.rename(
+                                  previousImgPath,
+                                  newImgPath,
+                                  function (err) {
+                                    if (err) {
+                                      reject(err);
+                                    } else {
+                                      resolve();
+                                    }
+                                  }
+                                );
+                              });
+                              promiseRenameImages.push(p);
                             });
                           })
-                          promiseRenameImages.push(p);
-                        });
-                      }).catch(err => next(err));
+                          .catch((err) => next(err));
 
-                      // If images were updated in db and locally
-                      Promise.all(promiseRenameImages).then(() => {
-                        // Redirect user to inventory
-                        Category.find()
-                        .sort([["title", "ascending"]])
-                        .exec(function (err, list_categories) {
-                          if (err) {
-                            return next(err);
-                          }
-                          else {
+                        // If images were updated in db and locally
+                        Promise.all(promiseRenameImages)
+                          .then(() => {
                             // Redirect user to inventory
-                            res.render("category_list", {
-                              title: "Inventory List",
-                              category_list: list_categories
-                            });
-                          }
-                        });
-                      }).catch(err => next(err));
+                            Category.find()
+                              .sort([["title", "ascending"]])
+                              .exec(function (err, list_categories) {
+                                if (err) {
+                                  return next(err);
+                                } else {
+                                  // Redirect user to inventory
+                                  res.render("category_list", {
+                                    title: "Inventory List",
+                                    category_list: list_categories,
+                                  });
+                                }
+                              });
+                          })
+                          .catch((err) => next(err));
+                      }
                     }
-                  });
+                  );
+                }
               }
-            })
+            );
           }
           // If invalid file was uploaded
           else {
@@ -286,84 +303,101 @@ exports.category_update_post = function (req, res, next) {
         // If no image was uploaded
         else {
           // Update category in database
-          Category.findByIdAndUpdate(category_id, updated_category, function (err) {
-            if (err) {
-              return next(err);
-            } else {
-              // If an old image exists - rename it and keep it as default
-              if (fs.existsSync(originalImagePath)) {
-                fs.rename(
-                  originalImagePath,
-                  "public" + newCategory_imgUrl,
-                  function (err) {
-                    if (err) {
-                      return next(err);
-                    } else {
-                      // Update all items imgUrls in Db
-                      let promiseUpdateDb = [];
-                      results.items.forEach(item => {
-                        let p = new Promise((resolve, reject) => {
-                          let previousUrl = item.imgUrl;
-                          let newImgUrl = getNewImagePath(original_category_machine_title, newCategory_machine_title, previousUrl);
-                          let updateImgPath = {
-                            imgUrl: newImgUrl
-                          }
-                          Item.findByIdAndUpdate(item._id, updateImgPath, function(err) {
-                            if(err) {
-                              reject(err);
-                            }
-                            else {
-                              resolve([previousUrl, newImgUrl]);
-                            }
-                          });
-                        })
-                        promiseUpdateDb.push(p);
-                      });
-
-                      // Rename item images to match new category
-                      let promiseRenameImages = [];
-                      Promise.all(promiseUpdateDb).then(imgUrls => {
-                        imgUrls.forEach(urlPair => {
+          Category.findByIdAndUpdate(
+            category_id,
+            updated_category,
+            function (err) {
+              if (err) {
+                return next(err);
+              } else {
+                // If an old image exists - rename it and keep it as default
+                if (fs.existsSync(originalImagePath)) {
+                  fs.rename(
+                    originalImagePath,
+                    "public" + newCategory_imgUrl,
+                    function (err) {
+                      if (err) {
+                        return next(err);
+                      } else {
+                        // Update all items imgUrls in Db
+                        let promiseUpdateDb = [];
+                        results.items.forEach((item) => {
                           let p = new Promise((resolve, reject) => {
-                            let previousImgPath = 'public' + urlPair[0];
-                            let newImgPath = 'public' + urlPair[1];
-                            fs.rename(previousImgPath, newImgPath, function(err) {
-                              if(err) {
-                                reject(err);
+                            let previousUrl = item.imgUrl;
+                            let newImgUrl = getNewImagePath(
+                              original_category_machine_title,
+                              newCategory_machine_title,
+                              previousUrl
+                            );
+                            let updateImgPath = {
+                              imgUrl: newImgUrl,
+                            };
+                            Item.findByIdAndUpdate(
+                              item._id,
+                              updateImgPath,
+                              function (err) {
+                                if (err) {
+                                  reject(err);
+                                } else {
+                                  resolve([previousUrl, newImgUrl]);
+                                }
                               }
-                              else {
-                                resolve();
-                              }
+                            );
+                          });
+                          promiseUpdateDb.push(p);
+                        });
+
+                        // Rename item images to match new category
+                        let promiseRenameImages = [];
+                        Promise.all(promiseUpdateDb)
+                          .then((imgUrls) => {
+                            imgUrls.forEach((urlPair) => {
+                              let p = new Promise((resolve, reject) => {
+                                let previousImgPath = "public" + urlPair[0];
+                                let newImgPath = "public" + urlPair[1];
+                                fs.rename(
+                                  previousImgPath,
+                                  newImgPath,
+                                  function (err) {
+                                    if (err) {
+                                      reject(err);
+                                    } else {
+                                      resolve();
+                                    }
+                                  }
+                                );
+                              });
+                              promiseRenameImages.push(p);
                             });
                           })
-                          promiseRenameImages.push(p);
-                        });
-                      }).catch(err => next(err));
+                          .catch((err) => next(err));
 
-                      // If images were updated in db and locally
-                      Promise.all(promiseRenameImages).then(() => {
-                        // Redirect user to inventory
-                        Category.find()
-                        .sort([["title", "ascending"]])
-                        .exec(function (err, list_categories) {
-                          if (err) {
-                            return next(err);
-                          }
-                          else {
+                        // If images were updated in db and locally
+                        Promise.all(promiseRenameImages)
+                          .then(() => {
                             // Redirect user to inventory
-                            res.render("category_list", {
-                              title: "Inventory List",
-                              category_list: list_categories
-                            });
-                          }
-                        });
-                      }).catch(err => next(err));
+                            Category.find()
+                              .sort([["title", "ascending"]])
+                              .exec(function (err, list_categories) {
+                                if (err) {
+                                  return next(err);
+                                } else {
+                                  // Redirect user to inventory
+                                  res.render("category_list", {
+                                    title: "Inventory List",
+                                    category_list: list_categories,
+                                  });
+                                }
+                              });
+                          })
+                          .catch((err) => next(err));
+                      }
                     }
-                  }
-                );
+                  );
+                }
               }
             }
-          });
+          );
         }
       }
     }
@@ -401,16 +435,14 @@ exports.category_delete_post = function (req, res, next) {
     function (err, results) {
       if (err) {
         return next(err);
-      }
-      else {
+      } else {
         // If no items are found under a given category,delete it
-        if(!results.items.length) {
+        if (!results.items.length) {
           let imgPath = results.category.image_path;
-          Category.findByIdAndDelete(results.category._id).exec(function(err) {
-            if(err) {
+          Category.findByIdAndDelete(results.category._id).exec(function (err) {
+            if (err) {
               return next(err);
-            }
-            else {
+            } else {
               // Delete category image
               if (fs.existsSync(imgPath)) {
                 fs.unlink(imgPath, function (err) {
@@ -418,20 +450,18 @@ exports.category_delete_post = function (req, res, next) {
                     return next(err);
                   } else {
                     Category.find()
-                    .sort([["title", "ascending"]])
-                    .exec(function (err, list_categories) {
-                      if (err) {
-                        return next(err);
-                      }
-                      else {
-                        //Successful, so render
-                        res.render("category_list", {
-                          title: "Inventory List",
-                          category_list: list_categories
-                        });
-                      }
-                    }
-                    )
+                      .sort([["title", "ascending"]])
+                      .exec(function (err, list_categories) {
+                        if (err) {
+                          return next(err);
+                        } else {
+                          //Successful, so render
+                          res.render("category_list", {
+                            title: "Inventory List",
+                            category_list: list_categories,
+                          });
+                        }
+                      });
                   }
                 });
               }
