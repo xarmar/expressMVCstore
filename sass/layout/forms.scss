@@ -8,7 +8,7 @@
   flex-direction: column;
   justify-content: center;
   height: 100vh;
-  @media screen and (min-width: cv.$md) {
+  @media screen and (min-width: cv.$brk_md_min) {
     height: 85vh;
     justify-content: unset;
   }
@@ -32,7 +32,7 @@
         font-weight: 600;
         margin-top: 10px;
       }
-      @media screen and (min-width: cv.$xl) {
+      @media screen and (min-width: cv.$brk_xl_min) {
         max-width: 70%;
       }
       .form--column__submit {

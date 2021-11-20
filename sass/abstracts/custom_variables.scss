@@ -1,20 +1,26 @@
 // Set breakpoints
-$xs: 0;
-$sm: 576px;
-$md: 768px;
-$lg: 992px;
-$xl: 1200px;
-$xxl: 1400px;
+$brk_xs_min: 0;
+$brk_sm_min: 576px;
+$brk_md_min: 768px;
+$brk_lg_min: 992px;
+$brk_xl_min: 1200px;
+$brk_xxl_min: 1400px;
+
+$brk_sm_max: 575px;
+$brk_md_max: 767px;
+$brk_lg_max: 991px;
+$brk_xl_max: 1199px;
+$brk_xxl_max: 1399px;
 
 // Set colour palette
-$primary:       #2E5894;
-$secondary:      #3d405b;
-$success:       #52b788;
-$info:          #a8dadc;
-$warning:       #ffd166;
-$danger:        #ba181b;
-$light:         #f1faee;
-$dark:          #03071e;
+$primary: #2e5894;
+$secondary: #3d405b;
+$success: #52b788;
+$info: #a8dadc;
+$warning: #ffd166;
+$danger: #ba181b;
+$light: #f1faee;
+$dark: #03071e;
 
 // Set font-sizes
 $font_size_xs: 18px;
@@ -24,4 +30,3 @@ $font_size_m: 32px;
 $font_size_ml: 38px;
 $font_size_lg: 44px;
 $font_size_xl: 52px;
-

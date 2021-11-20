@@ -18,7 +18,7 @@
       margin-left: -4px;
     }
     .card__description {
-      @media screen and (max-width: cv.$md - 1) {
+      @media screen and (max-width: cv.$brk_md_max) {
         font-size: cv.$font_size_sm;
       }
     }
@@ -29,7 +29,7 @@
         margin: 0 5px;
         button {
           font-size: cv.$font_size_s;
-          @media screen and (max-width: cv.$md - 1) {
+          @media screen and (max-width: cv.$brk_md_max) {
             font-size: cv.$font_size_sm;
           }
           font-weight: 600;
@@ -47,23 +47,23 @@
 }
 
 // Makes the card flip sides when the width is between 768px and 1200px
-.card--display-reverse { 
-  @media screen and (min-width: cv.$md) and (max-width: cv.$xl - 1) {
+.card--display-reverse {
+  @media screen and (min-width: cv.$brk_md_min) and (max-width: cv.$brk_xl_max) {
     flex-direction: row-reverse;
     .col-5 {
       width: 58.33333333%;
     }
     .col-7 {
-      width: 41.66666667%
+      width: 41.66666667%;
     }
   }
 }
 
 // When width is under 768px display as column
 .card {
-  @media screen and (max-width: cv.$md - 1) {
+  @media screen and (max-width: cv.$brk_md_max) {
     flex-direction: column-reverse;
-    &>div {
+    & > div {
       width: 100%;
     }
   }
