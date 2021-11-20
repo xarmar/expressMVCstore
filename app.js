@@ -1,22 +1,27 @@
 require('dotenv').config();
 
 //Set up mongoose connection
-var mongoose = require('mongoose');
-var mongoDB = process.env.MONGO_URI;
+const mongoose = require('mongoose');
+const mongoDB = process.env.MONGO_URI;
 mongoose.connect(mongoDB, { useNewUrlParser: true , useUnifiedTopology: true});
-var db = mongoose.connection;
+const db = mongoose.connection;
 db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 
-var createError = require('http-errors');
-var express = require('express');
-var path = require('path');
-var cookieParser = require('cookie-parser');
-var logger = require('morgan');
+const cookieParser = require('cookie-parser');
+const compression = require('compression');
+const createError = require('http-errors');
+const express = require('express');
+const helmet = require('helmet');
+const logger = require('morgan');
+const path = require('path');
 
-var indexRouter = require('./routes/index');
-var inventoryRouter = require('./routes/inventory');
+const indexRouter = require('./routes/index');
+const inventoryRouter = require('./routes/inventory');
 
-var app = express();
+const app = express();
+
+app.use(compression()); 
+app.use(helmet());
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
