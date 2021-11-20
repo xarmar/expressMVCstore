@@ -28,10 +28,14 @@ block content
                 div.form-group.row
                   div.col-xl-5
                     label(for='title') Title:
-                    input#title.form-control(name='title' required value=category.title)
+                    input#title.form-control(name='title' required value=populate ? populate.title : category.title)
+                    if express_warnings
+                      p.form--feedback-warning #{express_warnings.title} 
                   div.col-xl-5
                     label(for='description') Description:
-                    input#description.form-control(name='description' required value=category.description)
+                    input#description.form-control(name='description' required value=populate ? populate.description  : category.description)
+                    if express_warnings
+                      p.form--feedback-warning #{express_warnings.description} 
                   div.form-group.row
                     div.col-xl-5
                       label(for='image') Category image:
