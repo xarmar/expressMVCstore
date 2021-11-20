@@ -62,15 +62,23 @@ exports.category_create_post = function (req, res, next) {
       }
     );
   } else {
-    // Reject invalid extension and warn user
-    res.render("category_create", {
-      title: "Create new category",
-      warnings: { img: "Only '.jpg', '.jpeg' and '.png' are allowed." },
-      populate: {
-        title: title,
-        description: description,
-      },
-    });
+    // Delete uploaded file and warn user of invalid file
+    if (fs.existsSync(image.path)) {
+      fs.unlink(image.path, function (err) {
+        if (err) {
+          return next(err);
+        } else {
+          res.render("category_create", {
+            title: "Create new category",
+            warnings: { img: "Only '.jpg', '.jpeg' and '.png' are allowed." },
+            populate: {
+              title: title,
+              description: description,
+            },
+          });
+        }
+      });
+    }
   }
 };
 
@@ -257,14 +265,22 @@ exports.category_update_post = function (req, res, next) {
           }
           // If invalid file was uploaded
           else {
-            // Warn user an invalid file was  uploaded
-            res.render("category_update", {
-              title: `Editing ${results.original_category.title} category`,
-              category: results.original_category,
-              warnings: {
-                img: "Only '.jpg', '.jpeg' and '.png' are allowed.",
-              },
-            });
+            // Delete uploaded file and warn user of invalid file
+            if (fs.existsSync(image.path)) {
+              fs.unlink(image.path, function (err) {
+                if (err) {
+                  return next(err);
+                } else {
+                  res.render("category_update", {
+                    title: `Editing ${results.original_category.title} category`,
+                    category: results.original_category,
+                    warnings: {
+                      img: "Only '.jpg', '.jpeg' and '.png' are allowed.",
+                    },
+                  });
+                }
+              });
+            }
           }
         }
         // If no image was uploaded
@@ -434,4 +450,3 @@ exports.category_delete_post = function (req, res, next) {
     }
   );
 };
-

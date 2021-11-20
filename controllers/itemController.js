@@ -90,24 +90,34 @@ exports.item_create_post = function (req, res, next) {
       }
     );
   } else {
-    // Reject invalid extension and warn user
-    Category.findById(categoryId).exec(function (err, category) {
-      if (err) {
-        return next(err);
-      } else {
-        res.render("item_create", {
-          title: "Create new item",
-          category: category,
-          warnings: { img: "Only '.jpg', '.jpeg' and '.png' are allowed." },
-          populate: {
-            title: title,
-            description: description,
-            price: price,
-            stock: stock,
-          },
-        });
-      }
-    });
+    // Delete uploaded file and warn user of invalid file
+    if (fs.existsSync(image.path)) {
+      fs.unlink(image.path, function (err) {
+        if (err) {
+          return next(err);
+        } else {
+          Category.findById(categoryId).exec(function (err, category) {
+            if (err) {
+              return next(err);
+            } else {
+              res.render("item_create", {
+                title: "Create new item",
+                category: category,
+                warnings: {
+                  img: "Only '.jpg', '.jpeg' and '.png' are allowed.",
+                },
+                populate: {
+                  title: title,
+                  description: description,
+                  price: price,
+                  stock: stock,
+                },
+              });
+            }
+          });
+        }
+      });
+    }
   }
 };
 
@@ -261,16 +271,24 @@ exports.item_update_post = function (req, res, next) {
 
           // If invalid file was uploaded
           else {
-            // Warn user an invalid file was  uploaded
-            res.render("item_update", {
-              title: "Edit your item",
-              category: results.original_category,
-              category_list: results.category_list,
-              item: results.original_item,
-              warnings: {
-                img: "Only '.jpg', '.jpeg' and '.png' are allowed.",
-              },
-            });
+            // Delete uploaded file and warn user of invalid file
+            if (fs.existsSync(image.path)) {
+              fs.unlink(image.path, function (err) {
+                if (err) {
+                  return next(err);
+                } else {
+                  res.render("item_update", {
+                    title: "Edit your item",
+                    category: results.original_category,
+                    category_list: results.category_list,
+                    item: results.original_item,
+                    warnings: {
+                      img: "Only '.jpg', '.jpeg' and '.png' are allowed.",
+                    },
+                  });
+                }
+              });
+            }
           }
         }
         // If no image was uploaded
