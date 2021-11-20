@@ -28,7 +28,7 @@ block content
                 div.form-group.row
                   div.col-xl-5
                     label(for='title') Title:
-                    input#title.form-control(name='title' required value=populate ? populate.title : "" placeholder="Your item title...")
+                    input#title.form-control(name='title' required value=populate ? populate.title : "" placeholder="Your item title..." maxLength="20")
                     if express_warnings
                       p.form--feedback-warning #{express_warnings.title}
                   div.col-xl-5

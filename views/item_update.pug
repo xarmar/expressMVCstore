@@ -34,7 +34,7 @@ block content
                         p.form--feedback-warning #{express_warnings.title}
                     div.col-xl-5
                       label(for='description') Description:
-                      input#description.form-control(name='description' required value=populate ? populate.description : item.description maxLength="40")
+                      input#description.form-control(name='description' required value=populate ? populate.description : item.description maxLength="30")
                       if express_warnings
                         p.form--feedback-warning #{express_warnings.description}
                   div.form-group.row
