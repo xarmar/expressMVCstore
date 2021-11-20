@@ -27,8 +27,8 @@ exports.itemFormValidator = [
     .isLength({ min: 1 })
     .withMessage("Minimum 1 character required!")
     .bail()
-    .isLength({ max: 30 })
-    .withMessage("Maximum 30 characters allowed!")
+    .isLength({ max: 90 })
+    .withMessage("Maximum 90 characters allowed!")
     .bail(),
   check("price")
     .trim()
@@ -161,8 +161,8 @@ exports.categoryFormValidator = [
     .isLength({ min: 1 })
     .withMessage("Minimum 1 character required!")
     .bail()
-    .isLength({ max: 30 })
-    .withMessage("Maximum 30 characters allowed!")
+    .isLength({ max: 90 })
+    .withMessage("Maximum 90 characters allowed!")
     .bail(),
   (req, res, next) => {
     const errors = validationResult(req);
