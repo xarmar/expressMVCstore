@@ -4,8 +4,8 @@ const Schema = mongoose.Schema;
 
 const CategorySchema = new Schema(
   {
-    title: {type: String, required: true, maxLength: 40},
-    description: {type: String, required: true, maxLength: 120},
+    title: {type: String, required: true, maxLength: 20},
+    description: {type: String, required: true, maxLength: 90},
     imgUrl: {type: String, required: true},
   }
 );

@@ -4,8 +4,8 @@ const Schema = mongoose.Schema;
 
 const ItemSchema = new Schema(
   {
-    title: {type: String, required: true, maxLength: 40},
-    description: {type: String, required: false, maxLength: 120},
+    title: {type: String, required: true, maxLength: 20},
+    description: {type: String, required: false, maxLength: 90},
     price: {type: Number, required: true, max: 9999},
     stock: {type: Number, required: true, max: 999},
     category: [{ type: Schema.Types.ObjectId, ref: "Category" }],
