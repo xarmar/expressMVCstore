@@ -85,11 +85,9 @@ exports.category_create_post = function (req, res, next) {
 
 // Displays list of all Categories.
 exports.category_list_get = function (req, res, next) {
-  const getCategoryList = Category.find()
+  Category.find()
     .sort([["title", "ascending"]])
-    .exec();
-
-  getCategoryList
+    .exec()
     .then((list_categories) => {
       res.render("category_list", {
         title: "Inventory List",
@@ -119,9 +117,9 @@ exports.category_get = function (req, res, next) {
 // Updates a category
 exports.category_update_get = function (req, res, next) {
   const category_id = req.params.category;
-  const getCategory = Category.findById(category_id).exec();
 
-  getCategory
+  Category.findById(category_id)
+    .exec()
     .then((category) => {
       res.render("category_update", {
         title: `Editing ${category.title} category`,
