@@ -150,172 +150,196 @@ exports.category_update_post = function (req, res, next) {
   const getOriginalCategory = Category.findById(category_id).exec();
   const getOriginalCategoryItems = Item.find({ category: category_id }).exec();
 
-  Promise.all([
-    getOriginalCategory,
-    getOriginalCategoryItems
-  ])
-  .then(([original_category, items]) => {
-    let originalImagePath = original_category.image_path;
-    let original_category_machine_title = original_category.machine_title;
+  Promise.all([getOriginalCategory, getOriginalCategoryItems])
+    .then(
+      ([original_category, items]) =>
+        new Promise((resolve, reject) => {
+          let originalImagePath = original_category.image_path;
+          let original_category_machine_title = original_category.machine_title;
 
-    // If an image was uploaded
-    if (image) {
-      // If user uploads a valid image
-      if (fileIsValidImg(image.mimetype)) {
-        // Update Category in database
-        Category.findByIdAndUpdate(category_id, updated_category).exec()
-        // Delete old image if it exists
-        .then(() => new Promise((resolve, reject) => {
-          if (fs.existsSync(originalImagePath)) {
-            fsPromises.unlink(originalImagePath)
-            .then(() => resolve())
-            .catch((err) => reject(err))
-          } 
-          else resolve()
-        }))
-        // Move uploaded image from 'temp' path to permanent public/images path
-        .then(() => fsPromises.rename(image.path, "public" + newCategory_imgUrl)) 
-        // Update items in DB
-        .then(() => {
-          // Update all items imgUrls in Db
-          let promiseUpdateDb = [];
-          items.forEach((item) => {
-            let p = new Promise((resolve, reject) => {
-              let previousUrl = item.imgUrl;
-              let newImgUrl = getNewImagePath(
-                original_category_machine_title,
-                newCategory_machine_title,
-                previousUrl
-              );
-              let updateImgPath = {
-                imgUrl: newImgUrl,
-              };
-              Item.findByIdAndUpdate(item._id, updateImgPath).exec()
-              .then(() => resolve([previousUrl, newImgUrl]))
-              .catch((err) => reject(err))
-            });
-            promiseUpdateDb.push(p);
-          });
-
-          // Rename item images to match new category
-          let promiseRenameImages = [];
-          Promise.all(promiseUpdateDb)
-            .then((imgUrls) => {
-              imgUrls.forEach((urlPair) => {
-                let p = new Promise((resolve, reject) => {
-                  let previousImgPath = "public" + urlPair[0];
-                  let newImgPath = "public" + urlPair[1];
-                  fsPromises.rename(previousImgPath, newImgPath)
-                  .then(() => resolve())
-                  .catch((err) => reject(err))
-                });
-                promiseRenameImages.push(p);
-              });
-            });
-
-          // If images were updated in db and locally
-          Promise.all(promiseRenameImages)
-            .then(() => {
-              // Redirect user to inventory
-              Category.find()
-                .sort([["title", "ascending"]])
+          // If an image was uploaded
+          if (image) {
+            // If user uploads a valid image
+            if (fileIsValidImg(image.mimetype)) {
+              // Update Category in database
+              Category.findByIdAndUpdate(category_id, updated_category)
                 .exec()
-                .then((list_categories) => {
-                  // Redirect user to inventory
-                  res.render("category_list", {
-                    title: "Inventory List",
-                    category_list: list_categories,
-                  });
-                })
-            })
-          }).catch((err) => next(err));
-      }
-      // If invalid image was uploaded
-      else {
-        // Delete uploaded file and warn user of invalid file
-        if (fs.existsSync(image.path)) {
-          fsPromises.unlink(image.path)
-          .then(() => {
-            res.render("category_update", {
-              title: `Editing ${original_category.title} category`,
-              category: original_category,
-              warnings: {
-                img: "Only '.jpg', '.jpeg' and '.png' are allowed.",
-              },
-            });
-          });
-        } 
-      }
-    }
 
-    // If no image was uploaded
-    else {
-    // Update category in database
-    Category.findByIdAndUpdate(category_id, updated_category).exec()
-    // If an old image exists - rename it and keep it as default
-    .then(() => new Promise((resolve, reject) => {
-      if (fs.existsSync(originalImagePath)) {
-        fsPromises.rename(originalImagePath, "public" + newCategory_imgUrl)
-        .then(() => resolve())
-        .catch(() => reject())
-      }
-    }))
-    // Update items in DB
-    .then(() => {
-      // Update all items imgUrls in Db
-      let promiseUpdateDb = [];
-      items.forEach((item) => {
-        let p = new Promise((resolve, reject) => {
-          let previousUrl = item.imgUrl;
-          let newImgUrl = getNewImagePath(
-            original_category_machine_title,
-            newCategory_machine_title,
-            previousUrl
-          );
-          let updateImgPath = {
-            imgUrl: newImgUrl,
-          };
-          Item.findByIdAndUpdate(item._id, updateImgPath).exec()
-          .then(() => resolve([previousUrl, newImgUrl]))
-          .catch((err) => reject(err))
-        });
-        promiseUpdateDb.push(p);
-      });
+                // Delete old image if it exists
+                .then(
+                  () =>
+                    new Promise((resolve, reject) => {
+                      if (fs.existsSync(originalImagePath)) {
+                        fsPromises
+                          .unlink(originalImagePath)
+                          .then(() => resolve())
+                          .catch((err) => reject(err));
+                      } else resolve();
+                    })
+                )
 
-      // Rename item images to match new category
-      let promiseRenameImages = [];
-      Promise.all(promiseUpdateDb)
-        .then((imgUrls) => {
-          imgUrls.forEach((urlPair) => {
-            let p = new Promise((resolve, reject) => {
-              let previousImgPath = "public" + urlPair[0];
-              let newImgPath = "public" + urlPair[1];
-              fsPromises.rename(previousImgPath, newImgPath)
-              .then(() => resolve())
+                // Move uploaded image from 'temp' path to permanent public/images path
+                .then(
+                  () =>
+                    new Promise((resolve, reject) => {
+                      fsPromises
+                        .rename(image.path, "public" + newCategory_imgUrl)
+                        .then(() => resolve())
+                        .catch((err) => reject(err));
+                    })
+                )
+
+                // Update items in DB
+                .then(
+                  () =>
+                    new Promise((resolve, reject) => {
+                      // Update all items imgUrls in Db
+                      let promiseUpdateDb = [];
+                      items.forEach((item) => {
+                        let p = new Promise((resolve, reject) => {
+                          let previousUrl = item.imgUrl;
+                          let newImgUrl = getNewImagePath(
+                            original_category_machine_title,
+                            newCategory_machine_title,
+                            previousUrl
+                          );
+                          let updateImgPath = {
+                            imgUrl: newImgUrl,
+                          };
+                          Item.findByIdAndUpdate(item._id, updateImgPath)
+                            .exec()
+                            .then(() => resolve([previousUrl, newImgUrl]))
+                            .catch((err) => reject(err));
+                        });
+                        promiseUpdateDb.push(p);
+                      });
+
+                      // Rename item images to match new category
+                      let promiseRenameImages = [];
+                      Promise.all(promiseUpdateDb)
+                        .then((imgUrls) => {
+                          imgUrls.forEach((urlPair) => {
+                            let p = new Promise((resolve, reject) => {
+                              let previousImgPath = "public" + urlPair[0];
+                              let newImgPath = "public" + urlPair[1];
+                              fsPromises
+                                .rename(previousImgPath, newImgPath)
+                                .then(() => resolve())
+                                .catch((err) => reject(err));
+                            });
+                            promiseRenameImages.push(p);
+                          });
+                        })
+                        .catch((err) => reject(err));
+
+                      // If images were updated in db and locally
+                      Promise.all(promiseRenameImages)
+                        .then(() => resolve())
+                        .catch((err) => reject(err));
+                    })
+                )
+                .catch((err) => reject(err))
+
+                .then(() => resolve());
+            }
+            // If invalid image was uploaded
+            else {
+              // Delete uploaded file and warn user of invalid file
+              if (fs.existsSync(image.path)) {
+                fsPromises
+                  .unlink(image.path)
+                  .then(() => {
+                    res.render("category_update", {
+                      title: `Editing ${original_category.title} category`,
+                      category: original_category,
+                      warnings: {
+                        img: "Only '.jpg', '.jpeg' and '.png' are allowed.",
+                      },
+                    });
+                  })
+                  .catch((err) => reject(err));
+              }
+            }
+          }
+
+          // If no image was uploaded
+          else {
+            // Update category in database
+            Category.findByIdAndUpdate(category_id, updated_category)
+              .exec()
+              // If an old image exists - rename it and keep it as default
+              .then(
+                () =>
+                  new Promise((resolve, reject) => {
+                    if (fs.existsSync(originalImagePath)) {
+                      fsPromises
+                        .rename(
+                          originalImagePath,
+                          "public" + newCategory_imgUrl
+                        )
+                        .then(() => resolve())
+                        .catch(() => reject());
+                    } else resolve();
+                  })
+              )
+
+              // Update items in DB
+              .then(
+                () =>
+                  new Promise((resolve, reject) => {
+                    // Update all items imgUrls in Db
+                    let promiseUpdateDb = [];
+                    items.forEach((item) => {
+                      let p = new Promise((resolve, reject) => {
+                        let previousUrl = item.imgUrl;
+                        let newImgUrl = getNewImagePath(
+                          original_category_machine_title,
+                          newCategory_machine_title,
+                          previousUrl
+                        );
+                        let updateImgPath = {
+                          imgUrl: newImgUrl,
+                        };
+                        Item.findByIdAndUpdate(item._id, updateImgPath)
+                          .exec()
+                          .then(() => resolve([previousUrl, newImgUrl]))
+                          .catch((err) => reject(err));
+                      });
+                      promiseUpdateDb.push(p);
+                    });
+
+                    // Rename item images to match new category
+                    let promiseRenameImages = [];
+                    Promise.all(promiseUpdateDb)
+                      .then((imgUrls) => {
+                        imgUrls.forEach((urlPair) => {
+                          let p = new Promise((resolve, reject) => {
+                            let previousImgPath = "public" + urlPair[0];
+                            let newImgPath = "public" + urlPair[1];
+                            fsPromises
+                              .rename(previousImgPath, newImgPath)
+                              .then(() => resolve())
+                              .catch((err) => reject(err));
+                          });
+                          promiseRenameImages.push(p);
+                        });
+                      })
+                      .catch((err) => reject(err));
+
+                    // If images were updated in db and locally
+                    Promise.all(promiseRenameImages)
+                      .then(() => resolve())
+                      .catch((err) => reject(err));
+                  })
+              )
               .catch((err) => reject(err))
-            });
-            promiseRenameImages.push(p);
-          });
-        });
 
-      // If images were updated in db and locally
-      Promise.all(promiseRenameImages)
-        .then(() => {
-          // Redirect user to inventory
-          Category.find()
-            .sort([["title", "ascending"]])
-            .exec()
-            .then((list_categories) => {
-              // Redirect user to inventory
-              res.render("category_list", {
-                title: "Inventory List",
-                category_list: list_categories,
-              });
-            })
+              .then(() => resolve());
+          }
         })
-      }).catch((err) => next(err));
-    }
-  }).catch((err) => next(err))
+    )
+    .then(() => res.redirect("/inventory"))
+    .catch((err) => next(err));
 };
 
 // Deletes a category
