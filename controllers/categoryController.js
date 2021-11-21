@@ -117,20 +117,19 @@ exports.category_get = function (req, res, next) {
 
 // Updates a category
 exports.category_update_get = function (req, res, next) {
-  let category_id = req.params.category;
+  const category_id = req.params.category;
+  const getCategory = Category.findById(category_id).exec();
 
-  Category.findById(category_id).exec(function (err, category) {
-    if (err) {
-      return next(err);
-    } else {
-      // Successful, so render.
+  getCategory
+    .then((category) => {
       res.render("category_update", {
         title: `Editing ${category.title} category`,
         category: category,
       });
-    }
-  });
+    })
+    .catch((err) => next(err));
 };
+
 exports.category_update_post = function (req, res, next) {
   // Get original category id's
   let category_id = req.params.category;
