@@ -84,43 +84,35 @@ exports.category_create_post = function (req, res, next) {
 
 // Displays list of all Categories.
 exports.category_list_get = function (req, res, next) {
-  Category.find()
+  const getCategoryList = Category.find()
     .sort([["title", "ascending"]])
-    .exec(function (err, list_categories) {
-      if (err) {
-        return next(err);
-      } else {
-        //Successful, so render
-        res.render("category_list", {
-          title: "Inventory List",
-          category_list: list_categories,
-        });
-      }
-    });
+    .exec();
+
+  getCategoryList
+    .then((list_categories) => {
+      res.render("category_list", {
+        title: "Inventory List",
+        category_list: list_categories,
+      });
+    })
+    .catch((err) => next(err));
 };
+
 // Displays a category and all it's items
 exports.category_get = function (req, res, next) {
-  let id = req.params.category;
-  async.parallel(
-    {
-      found_category: function (callback) {
-        Category.findById(id).exec(callback);
-      },
-      items: function (callback) {
-        Item.find({ category: id }).exec(callback);
-      },
-    },
-    function (err, results) {
-      if (err) {
-        return next(err);
-      }
+  const id = req.params.category;
+  const getCategory = Category.findById(id).exec();
+  const getCategoryItems = Item.find({ category: id }).exec();
+
+  Promise.all([getCategory, getCategoryItems])
+    .then(([found_category, items]) => {
       res.render("category_read", {
-        title: `${results.found_category.title} items`,
-        category: results.found_category,
-        items: results.items,
+        title: `${found_category.title} items`,
+        category: found_category,
+        items: items,
       });
-    }
-  );
+    })
+    .catch((err) => next(err));
 };
 
 // Updates a category
