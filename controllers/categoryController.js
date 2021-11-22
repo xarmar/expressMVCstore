@@ -24,51 +24,41 @@ exports.category_create_post = function (req, res, next) {
 
   // If image has valid mimetype (jpg) => accept and render new item in list
   if (fileIsValidImg(image.mimetype)) {
-    async.waterfall(
-      [
-        // 1 - Create category object and save it in database
-        function (callback) {
-          let newCategory = new Category({
-            title: title,
-            description: description,
-            imgUrl: imgUrl,
-          });
-          newCategory.save(function (err) {
-            if (err) {
-              return next(err);
-            } else {
-              callback(null);
-            }
-          });
-        },
-        // 2 - Save image in Server
-        function (callback) {
-          let targetPath = path.join("public" + imgUrl);
-          // Move image from 'temp' path to permanent public/images path
-          fs.rename(image.path, targetPath, function (err) {
-            if (err) {
-              return next(err);
-            } else {
-              callback(null);
-            }
-          });
-        },
-      ],
-      function (err) {
-        if (err) {
-          return next(err);
-        } else {
-          res.redirect("/inventory");
-        }
-      }
-    );
+    // Create category object and save it in database
+    const saveNewCategory = new Promise((resolve, reject) => {
+      let newCategory = new Category({
+        title: title,
+        description: description,
+        imgUrl: imgUrl,
+      });
+
+      newCategory
+        .save()
+        .then(() => resolve())
+        .catch((err) => reject(err));
+    });
+
+    // Add image to database
+    saveNewCategory
+      .then(
+        () =>
+          new Promise((resolve, reject) => {
+            let targetPath = path.join("public" + imgUrl);
+            // Move image from 'temp' path to permanent public/images path
+            fsPromises
+              .rename(image.path, targetPath)
+              .then(() => resolve())
+              .catch((err) => reject(err));
+          })
+      )
+      .then(() => res.redirect("/inventory"))
+      .catch((err) => next(err));
   } else {
     // Delete uploaded file and warn user of invalid file
     if (fs.existsSync(image.path)) {
-      fs.unlink(image.path, function (err) {
-        if (err) {
-          return next(err);
-        } else {
+      fsPromises
+        .unlink(image.path)
+        .then(() => {
           res.render("category_create", {
             title: "Create new category",
             warnings: { img: "Only '.jpg', '.jpeg' and '.png' are allowed." },
@@ -77,8 +67,8 @@ exports.category_create_post = function (req, res, next) {
               description: description,
             },
           });
-        }
-      });
+        })
+        .catch((err) => next(err));
     }
   }
 };
