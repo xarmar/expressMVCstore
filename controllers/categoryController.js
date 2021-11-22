@@ -344,75 +344,53 @@ exports.category_update_post = function (req, res, next) {
 exports.category_delete_get = function (req, res, next) {
   let id = req.params.category;
 
-  Category.findById(id).exec(function (err, category) {
-    if (err) {
-      return next(err);
-    } else {
+  Category.findById(id)
+    .exec()
+    .then((category) => {
       // Successful, so render.
       res.render("category_delete", {
         title: `Delete ${category.title} category`,
         category: category,
       });
-    }
-  });
+    })
+    .catch((err) => next(err));
 };
 exports.category_delete_post = function (req, res, next) {
   let id = req.params.category;
 
-  async.parallel(
-    {
-      category: function (callback) {
-        Category.findById(id).exec(callback);
-      },
-      items: function (callback) {
-        Item.find({ category: id }).exec(callback);
-      },
-    },
-    function (err, results) {
-      if (err) {
-        return next(err);
-      } else {
-        // If no items are found under a given category,delete it
-        if (!results.items.length) {
-          let imgPath = results.category.image_path;
-          Category.findByIdAndDelete(results.category._id).exec(function (err) {
-            if (err) {
-              return next(err);
-            } else {
-              // Delete category image
-              if (fs.existsSync(imgPath)) {
-                fs.unlink(imgPath, function (err) {
-                  if (err) {
-                    return next(err);
-                  } else {
-                    Category.find()
-                      .sort([["title", "ascending"]])
-                      .exec(function (err, list_categories) {
-                        if (err) {
-                          return next(err);
-                        } else {
-                          //Successful, so render
-                          res.render("category_list", {
-                            title: "Inventory List",
-                            category_list: list_categories,
-                          });
-                        }
-                      });
-                  }
-                });
-              }
-            }
-          });
-        }
-        // If items found, warn user
-        else {
-          res.render("category_delete", {
-            title: `Delete ${results.category.title} category`,
-            category: results.category,
-            conflicting_items: results.items,
-          });
-        }
-      }
-    }
-  );
+  const getCategory = Category.findById(id).exec();
+  const getItems = Item.find({ category: id }).exec();
+
+  Promise.all([getCategory, getItems])
+    .then(
+      ([category, items]) =>
+        new Promise((resolve, reject) => {
+          // If no items are found under a given category,delete it
+          if (!items.length) {
+            let imgPath = category.image_path;
+            Category.findByIdAndDelete(category._id)
+              .exec()
+              .then(() => {
+                // Delete category image
+                if (fs.existsSync(imgPath)) {
+                  fsPromises
+                    .unlink(imgPath)
+                    .then(() => resolve())
+                    .catch((err) => reject(err));
+                }
+              })
+              .catch((err) => reject(err));
+          }
+          // If items found, warn user
+          else {
+            res.render("category_delete", {
+              title: `Delete ${category.title} category`,
+              category: category,
+              conflicting_items: items,
+            });
+          }
+        })
+    )
+    .then(() => res.redirect("/inventory"))
+    .catch((err) => next(err));
 };
