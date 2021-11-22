@@ -1,4 +1,3 @@
-const async = require("async");
 const Category = require("../models/category");
 const fileIsValidImg = require("../helperFunctions/fileIsValidImg");
 const fs = require("fs");
@@ -86,7 +85,6 @@ exports.category_list_get = function (req, res, next) {
     })
     .catch((err) => next(err));
 };
-
 // Displays a category and all it's items
 exports.category_get = function (req, res, next) {
   const id = req.params.category;
@@ -118,7 +116,6 @@ exports.category_update_get = function (req, res, next) {
     })
     .catch((err) => next(err));
 };
-
 exports.category_update_post = function (req, res, next) {
   // Get original category id's
   const category_id = req.params.category;
