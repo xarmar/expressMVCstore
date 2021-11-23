@@ -1,10 +1,11 @@
 const async = require("async");
 const Category = require("../models/category");
 const fileIsValidImg = require("../helperFunctions/fileIsValidImg");
+const fs = require("fs");
+const fsPromises = require("fs.promises");
 const Item = require("../models/item");
 const mongoose = require("mongoose");
 const path = require("path");
-const fs = require("fs");
 
 // Creates a new item
 exports.item_create_get = function (req, res, next) {
@@ -21,83 +22,63 @@ exports.item_create_get = function (req, res, next) {
     .catch((err) => next(err));
 };
 exports.item_create_post = function (req, res, next) {
-  let title = req.body.title;
-  let description = req.body.description;
-  let price = req.body.price;
-  let stock = req.body.stock;
-  let categoryId = req.body.categoryId;
-  let image = req.file;
+  const title = req.body.title;
+  const description = req.body.description;
+  const price = req.body.price;
+  const stock = req.body.stock;
+  const categoryId = req.body.categoryId;
+  const image = req.file;
 
-  // If image has valid mimetype (jpg) => accept and render new item in list
+  // If image has valid mimetype => accept and render new item in list
   if (fileIsValidImg(image.mimetype)) {
-    async.waterfall(
-      [
-        // 1 - Find category
-        function (callback) {
-          Category.findById(categoryId, function getCategory(err, categoryObj) {
-            if (err) {
-              return next(err);
-            } else {
-              callback(null, categoryObj);
-            }
-          });
-        },
-        // 2 - Create item object
-        function (categoryObj, callback) {
-          let imgUrl = `/images/${title.toLowerCase().split(" ").join("")}_${
-            categoryObj.machine_title
-          }.jpg`;
+    Category.findById(categoryId)
+      .exec()
+      .then(
+        (category) =>
+          new Promise((resolve, reject) => {
+            let imgUrl = `/images/${title.toLowerCase().split(" ").join("")}_${
+              category.machine_title
+            }.jpg`;
 
-          // Prepare Item object
-          let newItem = new Item({
-            title: title,
-            description: description,
-            price: price,
-            stock: stock,
-            category: categoryId,
-            imgUrl: imgUrl,
-          });
-          // Save Item Object in Database
-          newItem.save(function (err, itemObj) {
-            if (err) {
-              return next(err);
-            } else {
-              callback(null, categoryObj, itemObj);
-            }
-          });
-        },
-        // 3 - Save image in Server
-        function (categoryObj, itemObj, callback) {
-          let targetPath = path.join("public" + itemObj.imgUrl);
-          // Move image from 'temp' path to permanent public/images path
-          fs.rename(image.path, targetPath, function (err) {
-            if (err) {
-              return next(err);
-            } else {
-              callback(null, categoryObj);
-            }
-          });
-        },
-      ],
-      function (err, categoryObj) {
-        if (err) {
-          return next(err);
-        } else {
-          res.redirect(categoryObj.url);
-        }
-      }
-    );
+            // Prepare new Item object
+            let newItem = new Item({
+              title: title,
+              description: description,
+              price: price,
+              stock: stock,
+              category: categoryId,
+              imgUrl: imgUrl,
+            });
+
+            // Save new Item Object in Database
+            newItem
+              .save()
+              .then((item) => resolve([category, item]))
+              .catch((err) => reject(err));
+          })
+      )
+      .then(
+        ([category, item]) =>
+          new Promise((resolve, reject) => {
+            // Move image from 'temp' path to permanent public/images path
+            let targetPath = path.join("public" + item.imgUrl);
+            fsPromises
+              .rename(image.path, targetPath)
+              .then(() => resolve(category))
+              .catch((err) => reject(err));
+          })
+      )
+      .then((category) => res.redirect(category.url))
+      .catch((err) => next(err));
   } else {
     // Delete uploaded file and warn user of invalid file
     if (fs.existsSync(image.path)) {
-      fs.unlink(image.path, function (err) {
-        if (err) {
-          return next(err);
-        } else {
-          Category.findById(categoryId).exec(function (err, category) {
-            if (err) {
-              return next(err);
-            } else {
+      fsPromises
+        .unlink(image.path)
+        .then(() => {
+          Category.findById(categoryId)
+            .exec()
+            .then((category) => {
               res.render("item_create", {
                 title: "Create new item",
                 category: category,
@@ -111,10 +92,10 @@ exports.item_create_post = function (req, res, next) {
                   stock: stock,
                 },
               });
-            }
-          });
-        }
-      });
+            })
+            .catch((err) => next(err));
+        })
+        .catch((err) => next(err));
     }
   }
 };
