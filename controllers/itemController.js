@@ -319,63 +319,37 @@ exports.item_delete_get = function (req, res, next) {
     .catch((err) => next(err));
 };
 exports.item_delete_post = function (req, res, next) {
-  let item_id = req.params.item;
-  let category_id = req.params.category;
+  const item_id = req.params.item;
+  const category_id = req.params.category;
 
-  async.waterfall(
-    [
-      // Get item object
-      function (callback) {
-        Item.findById(item_id, function getItem(err, itemObj) {
-          if (err) {
-            return next(err);
+  const getItem = Item.findById(item_id).exec();
+  const getCategory = Category.findById(category_id).exec();
+
+  Promise.all([getItem, getCategory])
+    .then(
+      ([item, category]) =>
+        new Promise((resolve, reject) => {
+          // If a image exists, delete image
+          let imgPath = path.join("public" + item.imgUrl);
+          if (fs.existsSync(imgPath)) {
+            fsPromises
+              .unlink(imgPath)
+              .then(() => resolve([item, category]))
+              .catch((err) => reject(err));
           } else {
-            callback(null, itemObj);
+            resolve([item, category]);
           }
-        });
-      },
-      // Get category object
-      function (itemObj, callback) {
-        Category.findById(category_id, function getCategory(err, categoryObj) {
-          if (err) {
-            return next(err);
-          } else {
-            callback(null, itemObj, categoryObj);
-          }
-        });
-      },
-      // If a image exists, delete image
-      function (itemObj, categoryObj, callback) {
-        let imgPath = path.join("public" + itemObj.imgUrl);
-        if (fs.existsSync(imgPath)) {
-          fs.unlink(imgPath, function (err) {
-            if (err) {
-              return next(err);
-            } else {
-              callback(null, itemObj, categoryObj);
-            }
-          });
-        } else {
-          callback(null, itemObj, categoryObj);
-        }
-      },
-      // Delete item object
-      function (itemObj, categoryObj, callback) {
-        Item.findByIdAndRemove(itemObj._id, function deleteItem(err) {
-          if (err) {
-            return next(err);
-          } else {
-            callback(null, categoryObj);
-          }
-        });
-      },
-    ],
-    function (err, categoryObj) {
-      if (err) {
-        return next(err);
-      } else {
-        res.redirect(categoryObj.url);
-      }
-    }
-  );
+        })
+    )
+    .then(
+      ([item, category]) =>
+        new Promise((resolve, reject) => {
+          Item.findByIdAndRemove(item._id)
+            .exec()
+            .then(() => resolve([item, category]))
+            .catch((err) => reject(err));
+        })
+    )
+    .then(([item, category]) => res.redirect(category.url))
+    .catch((err) => next(err));
 };
