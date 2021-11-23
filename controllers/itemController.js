@@ -8,19 +8,17 @@ const fs = require("fs");
 
 // Creates a new item
 exports.item_create_get = function (req, res, next) {
-  let category_id = req.params.category;
+  const category_id = req.params.category;
 
-  Category.findById(category_id).exec(function (err, category) {
-    if (err) {
-      return next(err);
-    } else {
-      // Successful, so render.
+  Category.findById(category_id)
+    .exec()
+    .then((category) => {
       res.render("item_create", {
         title: "Create new item",
         category: category,
       });
-    }
-  });
+    })
+    .catch((err) => next(err));
 };
 exports.item_create_post = function (req, res, next) {
   let title = req.body.title;
@@ -126,38 +124,24 @@ exports.item_update_get = function (req, res, next) {
   let category_id = req.params.category;
   let item_id = req.params.item;
 
-  async.parallel(
-    {
-      // Get category object
-      category: function (callback) {
-        Category.findById(category_id).exec(callback);
-      },
-      // Get item object
-      item: function (callback) {
-        Item.findById(item_id).exec(callback);
-      },
-      // Get category list
-      category_list: function (callback) {
-        Category.find()
-          .sort([["title", "ascending"]])
-          .exec(callback);
-      },
-    },
-    function (err, results) {
-      if (err) {
-        return next(err);
-      } else {
-        // Successful, so render.
-        res.render("item_update", {
-          title: `Edit ${results.item.title}`,
-          category: results.category,
-          category_list: results.category_list,
-          item: results.item,
-        });
-      }
-    }
-  );
+  const getCategory = Category.findById(category_id).exec();
+  const getItem = Item.findById(item_id).exec();
+  const getCategoryList = Category.find()
+    .sort([["title", "ascending"]])
+    .exec();
+
+  Promise.all([getCategory, getItem, getCategoryList])
+    .then(([category, item, category_list]) => {
+      res.render("item_update", {
+        title: `Edit ${item.title}`,
+        category: category,
+        category_list: category_list,
+        item: item,
+      });
+    })
+    .catch((err) => next(err));
 };
+
 exports.item_update_post = function (req, res, next) {
   // Get original item and category id's
   let item_id = req.params.item;
@@ -339,30 +323,19 @@ exports.item_delete_get = function (req, res, next) {
   let category_id = req.params.category;
   let item_id = req.params.item;
 
-  async.parallel(
-    {
-      // Get category object
-      category: function (callback) {
-        Category.findById(category_id).exec(callback);
-      },
-      // Get category object
-      item: function (callback) {
-        Item.findById(item_id).exec(callback);
-      },
-    },
-    function (err, results) {
-      if (err) {
-        return next(err);
-      } else {
-        // Successful, so render.
-        res.render("item_delete", {
-          title: `Delete ${results.item.title}`,
-          category: results.category,
-          item: results.item,
-        });
-      }
-    }
-  );
+  const getCategory = Category.findById(category_id).exec();
+  const getItem = Item.findById(item_id).exec();
+
+  Promise.all([getCategory, getItem])
+    .then(([category, item]) => {
+      // Successful, so render.
+      res.render("item_delete", {
+        title: `Delete ${item.title}`,
+        category: category,
+        item: item,
+      });
+    })
+    .catch((err) => next(err));
 };
 exports.item_delete_post = function (req, res, next) {
   let item_id = req.params.item;
