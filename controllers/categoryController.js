@@ -13,15 +13,15 @@ exports.category_create_get = function (req, res, next) {
   });
 };
 exports.category_create_post = function (req, res, next) {
-  let title = req.body.title;
-  let description = req.body.description;
-  let image = req.file;
-  let imgUrl = `/images/${title
+  const title = req.body.title;
+  const description = req.body.description;
+  const image = req.file;
+  const imgUrl = `/images/${title
     .toLowerCase()
     .split(" ")
     .join("")}_category.jpg`;
 
-  // If image has valid mimetype (jpg) => accept and render new item in list
+  // If image has valid mimetype => accept and render new item in list
   if (fileIsValidImg(image.mimetype)) {
     // Create category object and save it in database
     const saveNewCategory = new Promise((resolve, reject) => {
@@ -329,7 +329,7 @@ exports.category_update_post = function (req, res, next) {
 
 // Deletes a category
 exports.category_delete_get = function (req, res, next) {
-  let id = req.params.category;
+  const id = req.params.category;
 
   Category.findById(id)
     .exec()
@@ -343,7 +343,7 @@ exports.category_delete_get = function (req, res, next) {
     .catch((err) => next(err));
 };
 exports.category_delete_post = function (req, res, next) {
-  let id = req.params.category;
+  const id = req.params.category;
 
   const getCategory = Category.findById(id).exec();
   const getItems = Item.find({ category: id }).exec();
