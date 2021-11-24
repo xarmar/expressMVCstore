@@ -1,4 +1,3 @@
-const async = require("async");
 const { check, validationResult } = require("express-validator");
 const Category = require("../models/category");
 const Item = require("../models/item");
@@ -61,13 +60,13 @@ exports.itemFormValidator = [
   (req, res, next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      let category_id = req.params.category;
-      let originalUrl = req.originalUrl;
-      let split = originalUrl.split("/");
-      let crud_operation = split[split.length - 1];
+      const category_id = req.params.category;
+      const originalUrl = req.originalUrl;
+      const split = originalUrl.split("/");
+      const crud_operation = split[split.length - 1];
 
       // Create fields that will re-populate form
-      let populate = {
+      const populate = {
         title: req.body.title,
         description: req.body.description,
         price: req.body.price,
@@ -82,54 +81,38 @@ exports.itemFormValidator = [
       });
 
       if (crud_operation === "edit") {
-        let item_id = req.params.item;
+        const item_id = req.params.item;
 
-        async.parallel(
-          {
-            // Get category object
-            category: function (callback) {
-              Category.findById(category_id).exec(callback);
-            },
-            // Get item object
-            item: function (callback) {
-              Item.findById(item_id).exec(callback);
-            },
-            // Get category list
-            category_list: function (callback) {
-              Category.find()
-                .sort([["title", "ascending"]])
-                .exec(callback);
-            },
-          },
-          function (err, results) {
-            if (err) {
-              return next(err);
-            } else {
-              // Redirect to original Url
-              res.render("item_update", {
-                title: `Edit ${results.item.title}`,
-                category: results.category,
-                category_list: results.category_list,
-                item: results.item,
-                populate: populate,
-                express_warnings: express_warnings,
-              });
-            }
-          }
-        );
+        const getCategory = Category.findById(category_id).exec();
+        const getItem = Item.findById(item_id).exec();
+        const getCategoryList = Category.find()
+          .sort([["title", "ascending"]])
+          .exec();
+
+        Promise.all([getCategory, getItem, getCategoryList])
+          .then(([category, item, category_list]) => {
+            res.render("item_update", {
+              title: `Edit ${item.title}`,
+              category: category,
+              category_list: category_list,
+              item: item,
+              populate: populate,
+              express_warnings: express_warnings,
+            });
+          })
+          .catch((err) => next(err));
       } else {
-        Category.findById(category_id).exec(function (err, category) {
-          if (err) {
-            return next(err);
-          } else {
+        Category.findById(category_id)
+          .exec()
+          .then((category) => {
             res.render("item_create", {
               title: "Create new item",
               category: category,
               populate: populate,
               express_warnings: express_warnings,
             });
-          }
-        });
+          })
+          .catch((err) => next(err));
       }
     } else {
       next();
@@ -167,12 +150,12 @@ exports.categoryFormValidator = [
   (req, res, next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      let originalUrl = req.originalUrl;
-      let split = originalUrl.split("/");
-      let crud_operation = split[split.length - 1];
+      const originalUrl = req.originalUrl;
+      const split = originalUrl.split("/");
+      const crud_operation = split[split.length - 1];
 
       // Create fields that will re-populate form
-      let populate = {
+      const populate = {
         title: req.body.title,
         description: req.body.description,
       };
@@ -185,19 +168,18 @@ exports.categoryFormValidator = [
       });
 
       if (crud_operation === "edit") {
-        let category_id = req.params.category;
-        Category.findById(category_id).exec(function (err, category) {
-          if (err) {
-            return next(err);
-          } else {
+        const category_id = req.params.category;
+        Category.findById(category_id)
+          .exec()
+          .then((category) => {
             res.render("category_update", {
               title: `Editing ${category.title} category`,
               category: category,
               populate: populate,
               express_warnings: express_warnings,
             });
-          }
-        });
+          })
+          .catch((err) => next(err));
       } else {
         res.render("category_create", {
           title: "Create new category",
