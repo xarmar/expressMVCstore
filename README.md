@@ -26,7 +26,4 @@
 - How to use **express-validator** to validate and sanitize form inputs.
 - How to use the **MVC pattern** to build a website that renders content from a database.
 
-## Could be Improved:
-- I chose to use the [async module](https://developer.mozilla.org/en-US/docs/Learn/Server-side/Express_Nodejs/Displaying_data/flow_control_using_async) from a previous [MDN tutorial](https://developer.mozilla.org/en-US/docs/Learn/Server-side/Express_Nodejs) to handle asynchronous code. This was a mistake - the code ended up looking like **callback hell**. I plan on re-writing this project in the future with **promises**.
-
 
