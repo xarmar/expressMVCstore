@@ -1,4 +1,3 @@
-const async = require("async");
 const Category = require("../models/category");
 const fileIsValidImg = require("../helperFunctions/fileIsValidImg");
 const fs = require("fs");
@@ -8,7 +7,7 @@ const mongoose = require("mongoose");
 const path = require("path");
 
 // Creates a new item
-exports.item_create_get = function (req, res, next) {
+exports.item_create_get = (req, res, next) => {
   const category_id = req.params.category;
 
   Category.findById(category_id)
@@ -21,7 +20,7 @@ exports.item_create_get = function (req, res, next) {
     })
     .catch((err) => next(err));
 };
-exports.item_create_post = function (req, res, next) {
+exports.item_create_post = (req, res, next) => {
   const title = req.body.title;
   const description = req.body.description;
   const price = req.body.price;
@@ -101,7 +100,7 @@ exports.item_create_post = function (req, res, next) {
 };
 
 // Updates an item
-exports.item_update_get = function (req, res, next) {
+exports.item_update_get = (req, res, next) => {
   const category_id = req.params.category;
   const item_id = req.params.item;
 
@@ -123,7 +122,7 @@ exports.item_update_get = function (req, res, next) {
     .catch((err) => next(err));
 };
 
-exports.item_update_post = function (req, res, next) {
+exports.item_update_post = (req, res, next) => {
   // Get original item and category id's
   const item_id = req.params.item;
   const category_id = req.params.category;
@@ -257,7 +256,7 @@ exports.item_update_post = function (req, res, next) {
 };
 
 // Deletes an item
-exports.item_delete_get = function (req, res, next) {
+exports.item_delete_get = (req, res, next) => {
   const category_id = req.params.category;
   const item_id = req.params.item;
 
@@ -275,7 +274,7 @@ exports.item_delete_get = function (req, res, next) {
     })
     .catch((err) => next(err));
 };
-exports.item_delete_post = function (req, res, next) {
+exports.item_delete_post = (req, res, next) => {
   const item_id = req.params.item;
   const category_id = req.params.category;
 

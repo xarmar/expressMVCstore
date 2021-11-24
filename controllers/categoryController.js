@@ -7,12 +7,12 @@ const Item = require("../models/item");
 const path = require("path");
 
 // Creates a new category
-exports.category_create_get = function (req, res, next) {
+exports.category_create_get = (req, res, next) => {
   res.render("category_create", {
     title: "Create new category",
   });
 };
-exports.category_create_post = function (req, res, next) {
+exports.category_create_post = (req, res, next) => {
   const title = req.body.title;
   const description = req.body.description;
   const image = req.file;
@@ -73,7 +73,7 @@ exports.category_create_post = function (req, res, next) {
 };
 
 // Displays list of all Categories.
-exports.category_list_get = function (req, res, next) {
+exports.category_list_get = (req, res, next) => {
   Category.find()
     .sort([["title", "ascending"]])
     .exec()
@@ -86,7 +86,7 @@ exports.category_list_get = function (req, res, next) {
     .catch((err) => next(err));
 };
 // Displays a category and all it's items
-exports.category_get = function (req, res, next) {
+exports.category_get = (req, res, next) => {
   const id = req.params.category;
   const getCategory = Category.findById(id).exec();
   const getCategoryItems = Item.find({ category: id }).exec();
@@ -103,7 +103,7 @@ exports.category_get = function (req, res, next) {
 };
 
 // Updates a category
-exports.category_update_get = function (req, res, next) {
+exports.category_update_get = (req, res, next) => {
   const category_id = req.params.category;
 
   Category.findById(category_id)
@@ -116,7 +116,7 @@ exports.category_update_get = function (req, res, next) {
     })
     .catch((err) => next(err));
 };
-exports.category_update_post = function (req, res, next) {
+exports.category_update_post = (req, res, next) => {
   // Get original category id's
   const category_id = req.params.category;
   const title = req.body.title;
@@ -328,7 +328,7 @@ exports.category_update_post = function (req, res, next) {
 };
 
 // Deletes a category
-exports.category_delete_get = function (req, res, next) {
+exports.category_delete_get = (req, res, next) => {
   const id = req.params.category;
 
   Category.findById(id)
@@ -342,7 +342,7 @@ exports.category_delete_get = function (req, res, next) {
     })
     .catch((err) => next(err));
 };
-exports.category_delete_post = function (req, res, next) {
+exports.category_delete_post = (req, res, next) => {
   const id = req.params.category;
 
   const getCategory = Category.findById(id).exec();
