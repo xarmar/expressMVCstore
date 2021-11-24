@@ -365,6 +365,9 @@ exports.category_delete_post = (req, res, next) => {
                     .then(() => resolve())
                     .catch((err) => reject(err));
                 }
+                else {
+                  resolve();
+                }
               })
               .catch((err) => reject(err));
           }
