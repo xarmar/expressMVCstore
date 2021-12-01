@@ -1,5 +1,7 @@
 # expressMCVstore
 
+[Check the app here.](https://secure-castle-27921.herokuapp.com/)
+
 ## About This App:
 - An inventory management app built with the **MVC (Model, View, Controller) design pattern**.
 - Back-end is handled by **NodeJS** with the **Express** framework.
